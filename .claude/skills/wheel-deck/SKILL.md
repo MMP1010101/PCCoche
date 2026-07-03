@@ -51,9 +51,25 @@ Capítulos ya hechos y probados (ver `prompts/`):
 - Cap.5 remapeo de ejes tras reinstalar uv/venv en la raíz del proyecto (ver arriba,
   "Números de su G29").
 - Cap.6 cada marcha abre un programa (Claude/ChatGPT/VSCode/Gemini/Kling/CapCut) con
-  el gesto embrague + acelerador. `core/launcher.py` nuevo. Falta que Markitos ponga
-  las rutas .exe de VSCode y CapCut y lo pruebe con el G29.
-  en su Windows con el G29.
+  el gesto embrague + acelerador. `core/launcher.py` nuevo.
+
+### Roadmap / próximos capítulos (ideas de Markitos, NO olvidar)
+
+- **Cap.7 ✅ HECHO: configurador + listador de apps por nombre.** `config.py` (menú de
+  consola) + `core/app_scanner.py` escanean los `.lnk` del Menú Inicio (usuario+sistema),
+  buscan por nombre y asignan app/URL a cada marcha, guardando en `settings.json`. La
+  búsqueda pesada se hace una vez en el configurador; el runtime solo abre lo guardado.
+  Resuelve el `.exe` con pywin32 (instalado en el venv), con fallback al `.lnk`. Probado:
+  detecta 137 apps en el PC de Markitos (CapCut incluido). Dos ejecutables previstos:
+  configurador + runtime. Falta que Markitos lo use para asignar sus apps.
+- **Cap.8 (siguiente): integrar el configurador con el G29.** Un botón del volante abre
+  el configurador y PAUSA el runtime (el principal suelta el G29 para no pisarse); el
+  configurador se maneja con el G29; el mismo botón GUARDA y CIERRA volviendo al runtime.
+- **Cap.9 (la "b"/"c" que no hay que olvidar 🔥): MODALIDADES por marcha.** Que cada marcha
+  no sea solo "abrir app" sino una modalidad distinta y personalizable. Ideas que soltó:
+  una de atajos de teclado, una para aceptar/rechazar cosas de Claude, una para cambiar
+  de modelo de Claude, y "más cosas originales" (quiere brainstorm conmigo). Estructura
+  pluggable: cada marcha = un tipo de modalidad configurable.
 
 ## Cómo trabajar con él: por capítulos
 
