@@ -62,6 +62,13 @@ Capítulos ya hechos y probados (ver `prompts/`):
   Resuelve el `.exe` con pywin32 (instalado en el venv), con fallback al `.lnk`. Probado:
   detecta 137 apps en el PC de Markitos (CapCut incluido). Dos ejecutables previstos:
   configurador + runtime. Falta que Markitos lo use para asignar sus apps.
+- **Cap.7b ✅ HECHO: configurador VISUAL (pizarra drag & drop con iconos).** `config_gui.py`
+  con CustomTkinter (paleta oscura "cabina"), 6 huecos con el color de cada marcha, lista
+  de apps con iconos reales (`core/icon_extractor.py` + pywin32 + Pillow, cache en
+  `config/icon_cache/`). Arrastras app → sueltas en el hueco → guarda en settings.json.
+  Deps nuevas instaladas: customtkinter, pillow. Se lanza con `python config_gui.py`.
+  El config.py de consola sigue existiendo como alternativa. Pendiente que Markitos lo
+  pruebe visualmente con el ratón.
 - **Cap.8 (siguiente): integrar el configurador con el G29.** Un botón del volante abre
   el configurador y PAUSA el runtime (el principal suelta el G29 para no pisarse); el
   configurador se maneja con el G29; el mismo botón GUARDA y CIERRA volviendo al runtime.
