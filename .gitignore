@@ -11,6 +11,9 @@ __pycache__/
 # Logs
 logs/*.log
 
+# Cache de iconos del configurador (se regenera solo)
+config/icon_cache/*.png
+
 # uv
 uv.lock
 
