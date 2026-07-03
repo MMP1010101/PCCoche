@@ -87,6 +87,10 @@ Capítulos ya hechos y probados (ver `prompts/`):
   cero peligrosos. Configurador con selector Apps/Atajos + buscador. Gesto en Atajos =
   mismo que apps (marcha + embrague + acelerador). Nota: win+shift+s puede requerir admin.
   Pendiente que Markitos lo pruebe con el G29 (y verificar que las levas son 4/5).
+- **Cap.8b ✅ HECHO: títulos dinámicos.** Antes el overlay mostraba siempre el nombre fijo
+  de la marcha; ahora `modalities.titulo_marcha(modo)` devuelve el título según modalidad
+  y lo asignado, con el número delante ("1 · Captura de pantalla", "6 · (sin app)"). El
+  overlay recibe texto dinámico pero mantiene el color del gradiente de la marcha.
 - **Pendiente (más adelante):**
   - Cada uno de los 4 botones libres con su CONFIGURACIÓN PERSONAL, distinta por
     modalidad (Markitos dijo que hay más ideas, de momento solo esto).

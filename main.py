@@ -108,11 +108,14 @@ def main():
                         wheel.cerrar()
                         return
                     if modos.cambiar_a(info):
-                        nombre = info["nombre"]
-                        log(msg["cambio_modo"].format(nombre=nombre))
-                        log(msg["modo_activo"].format(nombre=nombre))
-                        notificador.cambio_marcha(nombre)
-                        overlay.cambio_marcha(nombre)
+                        # Titulo DINAMICO segun modalidad y lo asignado.
+                        # El color sigue siendo el de la marcha (gradiente).
+                        titulo = modalidades.titulo_marcha(info["modo"])
+                        color = info.get("color")
+                        log(msg["cambio_modo"].format(nombre=titulo))
+                        log(msg["modo_activo"].format(nombre=titulo))
+                        notificador.cambio_marcha(titulo)
+                        overlay.cambio_marcha(titulo, color=color)
                 else:
                     # No es marcha -> ¿es el ON/OFF del interruptor de este modo?
                     if modos.modo_actual is None:
