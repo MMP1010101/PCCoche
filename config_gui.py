@@ -256,6 +256,8 @@ class Pizarra(ctk.CTk):
         t = texto.strip().lower()
         return [a for a in self._catalogo_atajos_lista()
                 if t in a["nombre"].lower() or t in a["destino"].lower()]
+
+    def _cargar_apps(self):
         self.apps = escanear_apps()
         self._render_historial()
         self._render_lista([])  # al inicio, sin listón: solo historial + buscador
