@@ -79,14 +79,20 @@ Capítulos ya hechos y probados (ver `prompts/`):
   + fila de chips de historial (apps ya asignadas, para re-asignar sin buscar). Historial
   persistido en `settings.json > historial_apps` (límite 12, sin duplicados, recientes
   primero, solo entran las asignadas de verdad). Botón "Ver todas" discreto opcional.
-- **Cap.8 (siguiente): integrar el configurador con el G29.** Un botón del volante abre
-  el configurador y PAUSA el runtime (el principal suelta el G29 para no pisarse); el
-  configurador se maneja con el G29; el mismo botón GUARDA y CIERRA volviendo al runtime.
-- **Cap.9 (la "b"/"c" que no hay que olvidar 🔥): MODALIDADES por marcha.** Que cada marcha
-  no sea solo "abrir app" sino una modalidad distinta y personalizable. Ideas que soltó:
-  una de atajos de teclado, una para aceptar/rechazar cosas de Claude, una para cambiar
-  de modelo de Claude, y "más cosas originales" (quiere brainstorm conmigo). Estructura
-  pluggable: cada marcha = un tipo de modalidad configurable.
+- **Cap.8 ✅ HECHO 🔥: MODALIDADES por leva.** `core/modalities.py` + `core/shortcuts.py`.
+  Las LEVAS (settings `levas`: botón 4 sig / 5 ant, cíclico) rotan entre modalidades:
+  Apps → Atajos (`modalidades.orden`). Cada una cambia lo que hacen las 6 marchas; el
+  overlay avisa ("MODO: ATAJOS"). Modalidad Atajos usa la librería `keyboard` (instalada)
+  con `catalogo_atajos`: 15 atajos SEGUROS (copiar, pegar, CAPTURA win+shift+s, alt+tab...),
+  cero peligrosos. Configurador con selector Apps/Atajos + buscador. Gesto en Atajos =
+  mismo que apps (marcha + embrague + acelerador). Nota: win+shift+s puede requerir admin.
+  Pendiente que Markitos lo pruebe con el G29 (y verificar que las levas son 4/5).
+- **Pendiente (más adelante):**
+  - Cada uno de los 4 botones libres con su CONFIGURACIÓN PERSONAL, distinta por
+    modalidad (Markitos dijo que hay más ideas, de momento solo esto).
+  - Modalidad "Modelos de Claude" y otras filosofías nuevas.
+  - Abrir el configurador con un botón del G29 (pausar runtime, soltar el volante, mismo
+    botón guarda y cierra).
 
 ## Cómo trabajar con él: por capítulos
 

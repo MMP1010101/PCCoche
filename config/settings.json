@@ -82,32 +82,123 @@
     "1": {
       "nombre": "Claude",
       "tipo": "url",
-      "destino": "https://claude.ai"
+      "destino": ""
     },
     "2": {
-      "nombre": "ChatGPT",
-      "tipo": "url",
-      "destino": "https://chatgpt.com"
+      "nombre": "Visual Studio Code",
+      "tipo": "app",
+      "destino": ""
     },
     "3": {
-      "nombre": "CapCut",
-      "tipo": "app",
-      "destino": "C:\\Users\\manci\\AppData\\Local\\CapCut\\Apps\\CapCut.exe"
+      "nombre": "chatGPT",
+      "tipo": "url",
+      "destino": ""
     },
     "4": {
-      "nombre": "Gemini",
+      "nombre": "github",
       "tipo": "url",
-      "destino": "https://gemini.google.com"
+      "destino": ""
     },
     "5": {
       "nombre": "Kling",
       "tipo": "url",
-      "destino": "https://klingai.com"
+      "destino": ""
     },
     "6": {
       "nombre": "Command Prompt",
       "tipo": "app",
-      "destino": "C:\\WINDOWS\\system32\\cmd.exe"
+      "destino": ""
+    }
+  },
+  "levas": {
+    "_comentario": "Levas del volante (paddles) para cambiar de MODALIDAD (ciclico). VERIFICAR numeros con tests/test.py; ajustar si tu G29 da otros.",
+    "siguiente": 4,
+    "anterior": 5
+  },
+  "modalidades": {
+    "_comentario": "Cada modalidad cambia lo que hacen las 6 marchas. 'orden' define el ciclo de las levas. Anade mas modalidades aqui.",
+    "orden": [
+      "apps",
+      "atajos"
+    ],
+    "apps": {
+      "nombre": "APPS",
+      "_comentario": "Las 6 marchas abren los programas de la seccion 'programas'."
+    },
+    "atajos": {
+      "nombre": "ATAJOS",
+      "_comentario": "Las 6 marchas ejecutan atajos de teclado (asignados en 'atajos_marcha').",
+      "atajos_marcha": {
+        "1": "",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": "",
+        "6": ""
+      }
+    }
+  },
+  "catalogo_atajos": {
+    "_comentario": "Atajos SEGUROS y utiles. clave -> teclas para la libreria 'keyboard'. Nunca se incluyen atajos destructivos (borrar, apagar, alt+f4...).",
+    "copiar": {
+      "nombre": "Copiar",
+      "teclas": "ctrl+c"
+    },
+    "pegar": {
+      "nombre": "Pegar",
+      "teclas": "ctrl+v"
+    },
+    "cortar": {
+      "nombre": "Cortar",
+      "teclas": "ctrl+x"
+    },
+    "deshacer": {
+      "nombre": "Deshacer",
+      "teclas": "ctrl+z"
+    },
+    "rehacer": {
+      "nombre": "Rehacer",
+      "teclas": "ctrl+y"
+    },
+    "seleccionar_todo": {
+      "nombre": "Seleccionar todo",
+      "teclas": "ctrl+a"
+    },
+    "guardar": {
+      "nombre": "Guardar",
+      "teclas": "ctrl+s"
+    },
+    "buscar": {
+      "nombre": "Buscar",
+      "teclas": "ctrl+f"
+    },
+    "captura": {
+      "nombre": "Captura de pantalla",
+      "teclas": "win+shift+s"
+    },
+    "cambiar_ventana": {
+      "nombre": "Cambiar de ventana",
+      "teclas": "alt+tab"
+    },
+    "nueva_pestana": {
+      "nombre": "Nueva pestana",
+      "teclas": "ctrl+t"
+    },
+    "cerrar_pestana": {
+      "nombre": "Cerrar pestana",
+      "teclas": "ctrl+w"
+    },
+    "zoom_mas": {
+      "nombre": "Acercar zoom",
+      "teclas": "ctrl+plus"
+    },
+    "zoom_menos": {
+      "nombre": "Alejar zoom",
+      "teclas": "ctrl+-"
+    },
+    "escritorio": {
+      "nombre": "Mostrar escritorio",
+      "teclas": "win+d"
     }
   },
   "gesto_lanzar": {
@@ -117,25 +208,91 @@
   "historial_apps": {
     "_comentario": "Apps ya asignadas a alguna marcha, para re-asignarlas rapido sin buscar. Las mas recientes primero, sin duplicados, maximo 'limite'. Se llena solo al asignar.",
     "limite": 12,
-    "items": []
+    "items": [
+      {
+        "nombre": "github",
+        "tipo": "url",
+        "destino": "https://github.com/MMP1010101/PCCoche/tree/main"
+      },
+      {
+        "nombre": "chatGPT",
+        "tipo": "url",
+        "destino": "https://chatgpt.com/es-ES/"
+      },
+      {
+        "nombre": "7-Zip File Manager",
+        "tipo": "app",
+        "destino": "C:\\Program Files\\7-Zip\\7zFM.exe"
+      },
+      {
+        "nombre": "Visual Studio Code",
+        "tipo": "app",
+        "destino": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+      }
+    ]
   },
   "filtro_apps": {
     "_comentario": "Filtra la lista del escaner. 'excluir': patrones (en nombre o ruta, sin mayus/minus) que se ocultan. 'excluir_ext': extensiones fuera. 'excluir_rutas': si la ruta contiene esto, fuera (salvo permitir_siempre). 'permitir_siempre': nombres que se salvan aunque coincidan con lo anterior (ej: cmd). Mejor pecar de limpio; si falta una app, anadela a permitir_siempre.",
     "excluir": [
-      "uninstall", "desinstalar", "unins000", "remove ", "quitar",
-      "help", "ayuda", "manual", "readme", "leame", "documentation",
-      "release notes", "notas de la version",
-      "setup", "instalar", "installer", "regedit", "registry",
-      "editor del registro", "services", "servicios", "driver",
-      "odbc", "syswow", "activation", "activacion", "repair", "reparar",
-      "configurar", "control panel", "panel de control"
+      "uninstall",
+      "desinstalar",
+      "unins000",
+      "remove ",
+      "quitar",
+      "help",
+      "ayuda",
+      "manual",
+      "readme",
+      "leame",
+      "documentation",
+      "release notes",
+      "notas de la version",
+      "setup",
+      "instalar",
+      "installer",
+      "regedit",
+      "registry",
+      "editor del registro",
+      "services",
+      "servicios",
+      "driver",
+      "odbc",
+      "syswow",
+      "activation",
+      "activacion",
+      "repair",
+      "reparar",
+      "configurar",
+      "control panel",
+      "panel de control"
     ],
-    "excluir_ext": [".chm", ".txt", ".url", ".pdf", ".html", ".htm", ".ini"],
-    "excluir_rutas": ["\\windows\\system32", "\\windows\\syswow64", "\\winsxs\\"],
+    "excluir_ext": [
+      ".chm",
+      ".txt",
+      ".url",
+      ".pdf",
+      ".html",
+      ".htm",
+      ".ini"
+    ],
+    "excluir_rutas": [
+      "\\windows\\system32",
+      "\\windows\\syswow64",
+      "\\winsxs\\"
+    ],
     "permitir_siempre": [
-      "cmd", "command prompt", "simbolo del sistema", "terminal",
-      "powershell", "bloc de notas", "notepad", "calculadora",
-      "calculator", "paint", "explorador de archivos", "file explorer"
+      "cmd",
+      "command prompt",
+      "simbolo del sistema",
+      "terminal",
+      "powershell",
+      "bloc de notas",
+      "notepad",
+      "calculadora",
+      "calculator",
+      "paint",
+      "explorador de archivos",
+      "file explorer"
     ]
   },
   "interruptores": {

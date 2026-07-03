@@ -75,6 +75,7 @@ class Pizarra(ctk.CTk):
         self._arrastrando = None  # app en curso de arrastre
         self._fantasma = None     # etiqueta flotante durante el arrastre
         self._ver_todas = False   # modo "ver todas" desactivado por defecto
+        self._modo_config = "apps"  # que modalidad estoy configurando
 
         self._construir()
         self._cargar_apps()
@@ -113,6 +114,14 @@ class Pizarra(ctk.CTk):
         ctk.CTkLabel(head, text="  arrastra una app a su marcha",
                      font=("Segoe UI", 13), text_color=TXT_DIM).pack(
             side="left", padx=(10, 0), pady=(8, 0))
+
+        # Selector de modalidad a configurar: Apps / Atajos
+        self.sel_modo = ctk.CTkSegmentedButton(
+            head, values=["Apps", "Atajos"],
+            command=self._cambiar_modo_config,
+            font=("Segoe UI", 13, "bold"))
+        self.sel_modo.set("Apps")
+        self.sel_modo.pack(side="right", pady=(4, 0))
 
         cuerpo = ctk.CTkFrame(cont, fg_color=BG)
         cuerpo.pack(fill="both", expand=True)
@@ -216,13 +225,47 @@ class Pizarra(ctk.CTk):
         except Exception:
             return None
 
-    def _cargar_apps(self):
+    def _cambiar_modo_config(self, valor):
+        self._modo_config = "atajos" if valor == "Atajos" else "apps"
+        self.buscador.delete(0, "end")
+        self._ver_todas = False
+        if self._modo_config == "atajos":
+            self.buscador.configure(
+                placeholder_text="🔍  Busca un atajo (copiar, captura...)")
+            # en atajos mostramos el catalogo entero (es corto y seguro)
+            self._render_lista(self._catalogo_atajos_lista())
+        else:
+            self.buscador.configure(
+                placeholder_text="🔍  Escribe el nombre de tu app...")
+            self._render_lista([])
+        self._render_historial()
+        for m in range(1, 7):
+            self._refrescar_hueco(m)
+
+    def _catalogo_atajos_lista(self):
+        cat = self.cfg.get("catalogo_atajos", {})
+        out = []
+        for clave, item in cat.items():
+            if isinstance(item, dict) and "teclas" in item:
+                out.append({"nombre": item.get("nombre", clave),
+                            "tipo": "atajo", "destino": clave,
+                            "teclas": item.get("teclas", "")})
+        return sorted(out, key=lambda a: a["nombre"].lower())
+
+    def _buscar_atajos(self, texto):
+        t = texto.strip().lower()
+        return [a for a in self._catalogo_atajos_lista()
+                if t in a["nombre"].lower() or t in a["destino"].lower()]
         self.apps = escanear_apps()
         self._render_historial()
         self._render_lista([])  # al inicio, sin listón: solo historial + buscador
 
     def _filtrar(self):
         t = self.buscador.get()
+        if self._modo_config == "atajos":
+            self._render_lista(self._buscar_atajos(t) if t.strip()
+                               else self._catalogo_atajos_lista())
+            return
         if t.strip():
             self._ver_todas = False
             self._render_lista(buscar(self.apps, t))
@@ -270,16 +313,25 @@ class Pizarra(ctk.CTk):
         fila = ctk.CTkFrame(self.lista, fg_color=PANEL_2, corner_radius=10)
         fila.pack(fill="x", pady=4, padx=4)
 
-        png = extraer_icono(app["destino"])
-        cim = self._ctk_img(png, 28)
-        ic = ctk.CTkLabel(fila, text="" if cim else "▦", image=cim,
-                          width=32, text_color=TXT_DIM)
-        ic.pack(side="left", padx=(10, 8), pady=8)
-        lbl = ctk.CTkLabel(fila, text=app["nombre"], font=("Segoe UI", 13),
-                           text_color=TXT, anchor="w")
+        es_atajo = app.get("tipo") == "atajo"
+        if es_atajo:
+            ic = ctk.CTkLabel(fila, text="⌨", width=32, font=("Segoe UI", 18),
+                              text_color=TXT_DIM)
+            ic.pack(side="left", padx=(10, 8), pady=8)
+            texto = f"{app['nombre']}   {app.get('teclas','')}"
+            lbl = ctk.CTkLabel(fila, text=texto, font=("Segoe UI", 13),
+                               text_color=TXT, anchor="w")
+        else:
+            png = extraer_icono(app["destino"])
+            cim = self._ctk_img(png, 28)
+            ic = ctk.CTkLabel(fila, text="" if cim else "▦", image=cim,
+                              width=32, text_color=TXT_DIM)
+            ic.pack(side="left", padx=(10, 8), pady=8)
+            lbl = ctk.CTkLabel(fila, text=app["nombre"], font=("Segoe UI", 13),
+                               text_color=TXT, anchor="w")
         lbl.pack(side="left", fill="x", expand=True)
 
-        # Arrastre manual: guardo la app y muevo un fantasma
+        # Arrastre manual: guardo la app/atajo y muevo un fantasma
         for w in (fila, ic, lbl):
             w.bind("<Button-1>", lambda e, a=app: self._empezar_arrastre(a, e))
             w.bind("<B1-Motion>", self._mover_arrastre)
@@ -324,6 +376,14 @@ class Pizarra(ctk.CTk):
 
     # ---------- Asignar / vaciar / guardar ----------
     def _asignar(self, modo, app):
+        if self._modo_config == "atajos" or app.get("tipo") == "atajo":
+            # Guarda la clave del atajo en la modalidad atajos
+            mapa = self.cfg.setdefault("modalidades", {}).setdefault(
+                "atajos", {}).setdefault("atajos_marcha", {})
+            mapa[str(modo)] = app["destino"]  # destino = clave del catalogo
+            guardar(self.cfg)
+            self._refrescar_hueco(modo)
+            return
         entrada = {
             "nombre": app["nombre"],
             "tipo": app.get("tipo", "app"),
@@ -336,14 +396,35 @@ class Pizarra(ctk.CTk):
         self._render_historial()
 
     def _vaciar(self, modo):
-        progs = self.cfg.setdefault("programas", {})
-        if str(modo) in progs:
-            progs[str(modo)]["destino"] = ""
-            guardar(self.cfg)
+        if self._modo_config == "atajos":
+            mapa = self.cfg.get("modalidades", {}).get("atajos", {}).get(
+                "atajos_marcha", {})
+            if str(modo) in mapa:
+                mapa[str(modo)] = ""
+                guardar(self.cfg)
+        else:
+            progs = self.cfg.setdefault("programas", {})
+            if str(modo) in progs:
+                progs[str(modo)]["destino"] = ""
+                guardar(self.cfg)
         self._refrescar_hueco(modo)
 
     def _refrescar_hueco(self, modo):
         h = self.huecos[modo]
+        if self._modo_config == "atajos":
+            mapa = self.cfg.get("modalidades", {}).get("atajos", {}).get(
+                "atajos_marcha", {})
+            clave = mapa.get(str(modo), "")
+            cat = self.cfg.get("catalogo_atajos", {}).get(clave, {})
+            h["icono"].configure(image=None, text="⌨" if clave else "")
+            if clave and cat:
+                h["texto"].configure(
+                    text=f"{cat.get('nombre', clave)}\n{cat.get('teclas','')}",
+                    text_color=TXT)
+            else:
+                h["texto"].configure(text="vacio  ·  arrastra un atajo aqui",
+                                     text_color=TXT_DIM)
+            return
         prog = self.cfg.get("programas", {}).get(str(modo), {})
         destino = prog.get("destino", "")
         nombre = prog.get("nombre", "")

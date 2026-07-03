@@ -1,7 +1,7 @@
 """
 ========================================
   WHEEL DECK · main.py
-  PixelWorks / Emperador · Capitulos 1-3
+  PixelWorks / Emperador · Capitulos 1-8
 ========================================
 Launcher del Logitech G29. App de terminal, segundo plano, consumo minimo.
 
@@ -13,7 +13,7 @@ Launcher del Logitech G29. App de terminal, segundo plano, consumo minimo.
 - Interruptores por modo: un boton ENCIENDE y otro APAGA (Modo 1: bot 0/1).
 
 USO:
-  uv pip install pygame winotify
+  uv pip install pygame winotify keyboard
   uv run main.py     (o:  python main.py)
 """
 
@@ -28,6 +28,8 @@ from core.switches import Interruptores
 from core.notify import Notificador
 from core.overlay import Overlay
 from core.launcher import Launcher
+from core.modalities import GestorModalidades
+from core.shortcuts import Atajos
 
 
 RUTA_CONFIG = os.path.join(os.path.dirname(__file__), "config", "settings.json")
@@ -54,7 +56,13 @@ def main():
     notificador = Notificador(cfg, log)
     overlay = Overlay(cfg, log)
     launcher = Launcher(cfg, log)
+    modalidades = GestorModalidades(cfg, log)
+    atajos = Atajos(cfg, log)
     gesto_activo = cfg.get("gesto_lanzar", {}).get("activo", True)
+
+    levas_cfg = cfg.get("levas", {})
+    leva_sig = levas_cfg.get("siguiente", 4)
+    leva_ant = levas_cfg.get("anterior", 5)
 
     print("=" * 46)
     print("  WHEEL DECK  ·  G29:", wheel.nombre)
@@ -80,6 +88,17 @@ def main():
             pulsados = set(wheel.botones_pulsados())
             nuevos = pulsados - marchas_prev  # botones recien pulsados
             for b in nuevos:
+                # ¿Es una LEVA? -> cambia de modalidad (ciclico) y avisa
+                if b == leva_sig or b == leva_ant:
+                    if b == leva_sig:
+                        modalidades.siguiente()
+                    else:
+                        modalidades.anterior()
+                    etiqueta = f"MODO: {modalidades.nombre_actual}"
+                    log(f">> {etiqueta}")
+                    overlay.cambio_marcha(etiqueta)
+                    continue
+
                 info = modos.marcha_pulsada(b)
                 if info:
                     # Es un boton de MARCHA -> cambia de modo o cierra
@@ -117,16 +136,26 @@ def main():
             si_prev = si_ahora
             no_prev = no_ahora
 
-            # --- 4. GESTO DE LANZAR (embrague + acelerador a la vez) ---
-            lanzar_ahora = (
+            # --- 4. GESTO DE DISPARO (embrague + acelerador a la vez) ---
+            # Segun la MODALIDAD activa: apps -> abre programa; atajos -> teclas.
+            disparar_ahora = (
                 gesto_activo
                 and modos.modo_actual is not None
                 and modos.modo_actual != "R"
                 and modos.gesto_lanzar(emb, wheel.acelerador())
             )
-            if lanzar_ahora and not lanzar_prev:
-                launcher.lanzar(modos.modo_actual)
-            lanzar_prev = lanzar_ahora
+            if disparar_ahora and not lanzar_prev:
+                modal = modalidades.actual
+                if modal == "atajos":
+                    mapa = modalidades.config_de("atajos").get("atajos_marcha", {})
+                    clave = mapa.get(str(modos.modo_actual), "")
+                    if clave:
+                        atajos.ejecutar(clave)
+                    else:
+                        log("(esta marcha no tiene atajo asignado)")
+                else:
+                    launcher.lanzar(modos.modo_actual)
+            lanzar_prev = disparar_ahora
 
             # --- Dormir hasta el siguiente frame (bajo consumo de CPU) ---
             resto = intervalo - (time.perf_counter() - inicio)
