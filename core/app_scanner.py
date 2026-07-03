@@ -46,10 +46,56 @@ def _resolver_lnk(ruta_lnk):
     return ruta_lnk  # fallback: abrir el propio acceso directo funciona igual
 
 
-def escanear_apps():
+def _cargar_filtro():
+    """Lee la seccion filtro_apps de settings.json. Si no esta, sin filtro."""
+    ruta = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "config", "settings.json",
+    )
+    try:
+        import json
+        with open(ruta, "r", encoding="utf-8") as f:
+            return json.load(f).get("filtro_apps", {})
+    except Exception:
+        return {}
+
+
+def _permitida(nombre, destino, filtro):
+    """Decide si una app pasa el filtro. True = se muestra."""
+    n = nombre.lower()
+    # Normaliza barras: asi el filtro de rutas funciona con \ (Windows) y / igual
+    d = (destino or "").lower().replace("\\", "/")
+
+    # Lista blanca: si el nombre coincide, se salva siempre.
+    for ok in filtro.get("permitir_siempre", []):
+        if ok.lower() in n:
+            return True
+
+    # Extensiones fuera (mira el destino)
+    for ext in filtro.get("excluir_ext", []):
+        if d.endswith(ext.lower()):
+            return False
+
+    # Rutas de sistema fuera (normaliza el patron tambien)
+    for r in filtro.get("excluir_rutas", []):
+        if r.lower().replace("\\", "/") in d:
+            return False
+
+    # Patrones prohibidos en nombre o ruta
+    for pat in filtro.get("excluir", []):
+        p = pat.lower()
+        if p in n or p in d:
+            return False
+
+    return True
+
+
+def escanear_apps(aplicar_filtro=True):
     """
     Devuelve lista de dicts: {"nombre": str, "destino": str}
     ordenada por nombre. En Windows lee los .lnk del Menu Inicio.
+    Si aplicar_filtro, oculta desinstaladores, ayudas y utilidades de sistema
+    segun la seccion 'filtro_apps' de settings.json (con lista blanca).
     """
     apps = {}
     if os.name == "nt":
@@ -57,11 +103,9 @@ def escanear_apps():
             patron = os.path.join(carpeta, "**", "*.lnk")
             for lnk in glob.glob(patron, recursive=True):
                 nombre = os.path.splitext(os.path.basename(lnk))[0]
-                # Evita duplicados por nombre (usuario + sistema)
                 if nombre not in apps:
                     apps[nombre] = _resolver_lnk(lnk)
     else:
-        # Linux: intenta leer .desktop basicos (best-effort, para pruebas)
         for base in ["/usr/share/applications",
                      os.path.expanduser("~/.local/share/applications")]:
             if os.path.isdir(base):
@@ -69,10 +113,15 @@ def escanear_apps():
                     nombre = os.path.splitext(os.path.basename(dsk))[0]
                     apps.setdefault(nombre, dsk)
 
-    return sorted(
-        [{"nombre": n, "destino": d} for n, d in apps.items()],
-        key=lambda a: a["nombre"].lower(),
-    )
+    lista = [{"nombre": n, "destino": d} for n, d in apps.items()]
+
+    if aplicar_filtro:
+        filtro = _cargar_filtro()
+        if filtro:
+            lista = [a for a in lista
+                     if _permitida(a["nombre"], a["destino"], filtro)]
+
+    return sorted(lista, key=lambda a: a["nombre"].lower())
 
 
 def buscar(apps, texto):

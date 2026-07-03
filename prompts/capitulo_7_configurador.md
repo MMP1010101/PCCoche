@@ -1,58 +1,30 @@
-=== PROMPT PARA CLAUDE — Capítulo 7: Configurador + listador de apps (abrir por nombre) ===
+=== PROMPT PARA CLAUDE — Capítulo 7: Configurador + listador de apps ===
 
-CONTEXTO: Wheel Deck (launcher Python + Logitech G29 + pygame, segundo plano,
-Windows). Caps 1-6 funcionan. En el Cap.6 cada marcha abre un programa, pero el
-problema es que hay que meter la RUTA EXACTA del .exe a mano en settings.json, y
-normalmente no sabes dónde está el ejecutable. Esto no escala.
+CONTEXTO: Wheel Deck (Python + G29 + pygame, segundo plano, Windows). Caps 1-6 ok.
+Problema del Cap.6: había que meter la ruta del .exe a mano. Este cap lo resuelve.
 
-EJES (verificados Cap.5, 4 ejes):
-- Eje 0 volante (sin usar) · Eje 1 acelerador · Eje 2 freno · Eje 3 embrague
-- Botones 12-17 marchas · 18 = R (salir) · 0,1 interruptor Modo1 · 2,3 libres
+VISION DEL PRODUCTO: dos ejecutables -> (1) CONFIGURADOR (solo config, no consume)
+y (2) PRINCIPAL/runtime (lee G29 en segundo plano, ligero).
 
-OBJETIVO DEL PRODUCTO FINAL (visión, para que orientes la arquitectura):
-- Habrá DOS ejecutables: (1) el CONFIGURADOR y (2) el programa PRINCIPAL (runtime
-  que lee el G29 en segundo plano, consumo mínimo).
-- El configurador es SOLO configuración: busca apps y guarda en settings.json.
-  NO lanza las apps, NO corre en segundo plano, no debe consumir recursos cuando
-  no se usa.
+LO MONTADO EN ESTE CAP:
+1. config.py = configurador de CONSOLA (menu de texto). Elegida consola por ser
+   lo mas ligero y lo que mejor encaja con el Cap.8 (manejarlo con el G29).
+2. core/app_scanner.py: escanea apps del PC leyendo los .lnk del Menu Inicio
+   (usuario + sistema). Resuelve el .exe real con pywin32 si esta; si no, usa el
+   .lnk (Windows lo abre igual).
+3. Buscar por nombre (parcial, sin mayus/minus) y listar apps detectadas.
+4. Asignar app o URL a cada marcha (1-6). Se guarda en settings.json > programas
+   con el formato actual { nombre, tipo, destino }.
+5. Busqueda pesada SOLO en config, una vez. El runtime (core/launcher.py) solo
+   abre lo guardado, sin escanear -> bajo consumo intacto.
 
-LO QUE QUIERO EN ESTE CAPÍTULO (solo el configurador + listador):
-1. Una herramienta de configuración aparte (ej: config.py / configurador, que en el
-   futuro será su propio .exe). De momento se lanza a mano; la integración con un
-   botón del G29 es el SIGUIENTE capítulo (Cap.8), no lo hagas aún.
-2. LISTADOR DE APPS: que escanee las apps instaladas del PC (lo normal en Windows:
-   accesos directos .lnk del Menú Inicio, tanto de usuario como de sistema) y las
-   liste por NOMBRE amigable. Así Markitos ve qué apps hay sin saber rutas.
-3. BUSCAR POR NOMBRE: Markitos escribe el nombre (ej "CapCut") y el configurador lo
-   busca/matchea entre las apps detectadas (búsqueda parcial, sin distinguir
-   mayúsculas). Muestra coincidencias.
-4. Al elegir una app para una marcha, el configurador RESUELVE su destino real (la
-   ruta del .lnk o del .exe que encuentre) y lo GUARDA en settings.json, en la
-   sección "programas" que ya existe. Idea clave para el bajo consumo: la búsqueda
-   pesada se hace UNA VEZ aquí, en config; el runtime luego solo abre lo guardado,
-   sin escanear nada.
-5. El runtime (core/launcher.py del Cap.6) debe seguir funcionando: abre lo que haya
-   guardado en settings.json (tipo "url" -> navegador; tipo "app" -> el destino
-   resuelto). Si una marcha no tiene destino configurado, avisa y no abre, no pete.
-6. Que el configurador permita asignar app a cada una de las 6 marchas (modos 1-6),
-   y también dejar tipo "url" con una URL a mano (para Claude, ChatGPT, Gemini,
-   Kling que van por web).
-7. Todo lo que se configura se persiste en settings.json (no en otro sitio raro).
+NO HECHO (siguientes caps, ya previsto en arquitectura):
+- Cap.8: boton del G29 abre el config, PAUSA el runtime (soltar el G29 para no
+  pisarse), manejar el config con el volante, y guardar+cerrar volviendo al runtime.
+- Cap.9: modalidades por marcha (apps, atajos de teclado, aceptar/rechazar Claude,
+  cambiar modelo, etc.).
 
-NO HACER TODAVÍA (próximos capítulos, no en este):
-- Cap.8: que un BOTÓN del G29 abra el configurador, pause el runtime, el configurador
-  también se maneje con el G29, y el mismo botón GUARDE y CIERRE volviendo al runtime.
-  (Detalle técnico ya previsto: cuando se abra el config, el principal debe SOLTAR/
-  pausar el G29 para no pisarse, y retomarlo al cerrar. No lo montes aún, solo tenlo
-  en mente para no cerrar puertas en la arquitectura.)
-- Cap.9: MODALIDADES por marcha (cada marcha = un tipo distinto: apps, atajos de
-  teclado, aceptar/rechazar cosas de Claude, cambiar modelo de Claude, etc.).
+NOTA WINDOWS: para resolucion fina del .exe -> uv pip install pywin32 (opcional).
 
-PREGUNTAS ABIERTAS:
-- Interfaz del configurador: ¿consola simple (menú de texto) o ventanita Tkinter?
-  Markitos no lo ha decidido; elige la más sencilla y ligera y coméntalo, se puede
-  cambiar. (Tkinter ya se usa para el overlay, así que está disponible.)
-- Formato de guardado en "programas": mantener el actual { nombre, tipo, destino }.
-
-ESTADO: ⏳ Por montar.
+ESTADO: ✅ montado y probado (escaneo, busqueda y guardado verificados).
 ===

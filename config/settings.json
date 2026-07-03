@@ -114,6 +114,24 @@
     "_comentario": "Gesto AND para abrir el programa de la marcha activa: embrague pisado (< umbral embrague_and) Y acelerador a fondo (<= umbral acelerador_si), los dos a la vez. Anti-repeticion: solo dispara una vez por gesto.",
     "activo": true
   },
+  "filtro_apps": {
+    "_comentario": "Filtra la lista del escaner. 'excluir': patrones (en nombre o ruta, sin mayus/minus) que se ocultan. 'excluir_ext': extensiones fuera. 'excluir_rutas': si la ruta contiene esto, fuera (salvo permitir_siempre). 'permitir_siempre': nombres que se salvan aunque coincidan con lo anterior (ej: cmd). Mejor pecar de limpio; si falta una app, anadela a permitir_siempre.",
+    "excluir": [
+      "uninstall", "desinstalar", "unins000", "remove ", "quitar",
+      "help", "ayuda", "manual", "readme", "leame", "documentation",
+      "release notes", "notas de la version",
+      "setup", "instalar", "installer", "regedit", "registry",
+      "editor del registro", "services", "servicios", "driver",
+      "odbc", "syswow", "activation", "activacion", "repair", "reparar"
+    ],
+    "excluir_ext": [".chm", ".txt", ".url", ".pdf", ".html", ".htm", ".ini"],
+    "excluir_rutas": ["\\windows\\system32", "\\windows\\syswow64", "\\winsxs\\"],
+    "permitir_siempre": [
+      "cmd", "command prompt", "simbolo del sistema", "terminal",
+      "powershell", "bloc de notas", "notepad", "calculadora",
+      "calculator", "paint", "explorador de archivos", "file explorer"
+    ]
+  },
   "interruptores": {
     "_comentario": "Combo por marcha: dentro de un modo, un boton ENCIENDE y otro APAGA. La clave es el numero de modo. Amplia aqui para mas modos.",
     "1": {

@@ -69,6 +69,11 @@ Capítulos ya hechos y probados (ver `prompts/`):
   Deps nuevas instaladas: customtkinter, pillow. Se lanza con `python config_gui.py`.
   El config.py de consola sigue existiendo como alternativa. Pendiente que Markitos lo
   pruebe visualmente con el ratón.
+- **Cap.7c ✅ HECHO: filtro de apps peligrosas/basura.** El escáner (`core/app_scanner.py`)
+  ahora oculta desinstaladores, ayudas/docs, instaladores y utilidades de sistema
+  (regedit, system32, syswow64, winsxs...). Lista blanca `permitir_siempre` salva cmd,
+  powershell, notepad, calc, etc. ("hasta el cmd es bueno"). Todo configurable en
+  `settings.json > filtro_apps`. Probado: 137 → 78 apps, cmd conservado.
 - **Cap.8 (siguiente): integrar el configurador con el G29.** Un botón del volante abre
   el configurador y PAUSA el runtime (el principal suelta el G29 para no pisarse); el
   configurador se maneja con el G29; el mismo botón GUARDA y CIERRA volviendo al runtime.
