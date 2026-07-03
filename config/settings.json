@@ -1,0 +1,102 @@
+{
+  "_comentario": "Config del Wheel Deck. Cambia numeros aqui sin tocar codigo.",
+
+  "g29": {
+    "fps": 30,
+
+    "ejes": {
+      "_comentario": "Mapeo verificado en Cap.5 (4 ejes). Eje 0 volante (sin usar).",
+      "acelerador": 1,
+      "freno": 2,
+      "embrague": 3
+    },
+
+    "embrague_and": {
+      "_comentario": "Los pedales van de +1.0 (reposo) a negativo (pisado). El embrague activa las acciones (AND) cuando su valor cae por debajo del umbral, es decir cuando esta pisado.",
+      "umbral": 0.44
+    },
+
+    "acelerador_si": {
+      "_comentario": "Acelerador pisado hasta este valor o menos = SI / confirmar",
+      "umbral": -0.72
+    },
+
+    "freno_no": {
+      "_comentario": "Freno pisado hasta este valor o menos = NO / cancelar",
+      "umbral": -0.62
+    }
+  },
+
+  "marchas": {
+    "_comentario": "Cada marcha = un modo con su programa. Colores del gradiente igual (verde->rojo). R cierra el Wheel Deck.",
+    "12": { "modo": 1, "nombre": "Claude",  "color": "#4ade80" },
+    "13": { "modo": 2, "nombre": "ChatGPT", "color": "#a3e635" },
+    "14": { "modo": 3, "nombre": "VSCode",  "color": "#facc15" },
+    "15": { "modo": 4, "nombre": "Gemini",  "color": "#fb923c" },
+    "16": { "modo": 5, "nombre": "Kling",   "color": "#f87171" },
+    "17": { "modo": 6, "nombre": "CapCut",  "color": "#ef4444" },
+    "18": { "modo": "R", "nombre": "Marcha atras (salir)", "color": "#6b7280" }
+  },
+
+  "notificaciones": {
+    "_comentario": "Toast NATIVO de Windows. Desactivado: usamos overlay propio con color (ver 'overlay'). Ponlo en true si prefieres el toast blanco del sistema.",
+    "activas": false,
+    "duracion": 2,
+    "titulo": "WHEEL DECK",
+    "app_id": "Wheel Deck"
+  },
+
+  "overlay": {
+    "_comentario": "Notificacion propia con Tkinter: ventanita sin bordes, siempre encima, con gradiente por modo. Se crea solo al cambiar de marcha y se destruye sola (consumo minimo). esquina: bottom-right / bottom-left / top-right / top-left.",
+    "activo": true,
+    "duracion": 2.0,
+    "esquina": "bottom-right",
+    "margen": 24,
+    "ancho": 320,
+    "alto": 110,
+    "fade": true,
+    "color_texto": "#ffffff"
+  },
+
+  "programas": {
+    "_comentario": "Que abre cada marcha. tipo 'url' -> abre en el navegador. tipo 'app' -> ejecuta ruta/comando. Rellena 'destino' con la URL o la ruta exacta del .exe. Ejemplos de ruta app: VSCode 'C:/Users/TU/AppData/Local/Programs/Microsoft VS Code/Code.exe'; CapCut suele estar en 'C:/Users/TU/AppData/Local/CapCut/...'. Si dejas destino vacio, avisa y no abre.",
+    "1": { "nombre": "Claude",  "tipo": "url", "destino": "https://claude.ai" },
+    "2": { "nombre": "ChatGPT", "tipo": "url", "destino": "https://chatgpt.com" },
+    "3": { "nombre": "VSCode",  "tipo": "app", "destino": "" },
+    "4": { "nombre": "Gemini",  "tipo": "url", "destino": "https://gemini.google.com" },
+    "5": { "nombre": "Kling",   "tipo": "url", "destino": "https://klingai.com" },
+    "6": { "nombre": "CapCut",  "tipo": "app", "destino": "" }
+  },
+
+  "gesto_lanzar": {
+    "_comentario": "Gesto AND para abrir el programa de la marcha activa: embrague pisado (< umbral embrague_and) Y acelerador a fondo (<= umbral acelerador_si), los dos a la vez. Anti-repeticion: solo dispara una vez por gesto.",
+    "activo": true
+  },
+
+  "interruptores": {
+    "_comentario": "Combo por marcha: dentro de un modo, un boton ENCIENDE y otro APAGA. La clave es el numero de modo. Amplia aqui para mas modos.",
+    "1": {
+      "nombre": "Interruptor de prueba",
+      "boton_on": 0,
+      "boton_off": 1
+    }
+  },
+
+  "mensajes": {
+    "arranque": "WHEEL DECK online. Mete una marcha, Emperador.",
+    "cambio_modo": "Cambiando a {nombre}...",
+    "modo_activo": "[ {nombre} ]",
+    "si": ">> SI / confirmado",
+    "no": ">> NO / cancelado",
+    "int_on": ">> {nombre}: ENCENDIDO ✅",
+    "int_off": ">> {nombre}: APAGADO ⛔",
+    "int_ya_on": "({nombre} ya estaba encendido)",
+    "int_ya_off": "({nombre} ya estaba apagado)",
+    "sin_interruptor": "(este modo no tiene interruptor aun)",
+    "abriendo": ">> Abriendo {nombre}... 🚀",
+    "sin_destino": ">> {nombre}: falta la ruta/URL en settings.json (programas).",
+    "sin_marcha_lanzar": "(mete una marcha antes de lanzar)",
+    "fallo_abrir": ">> No pude abrir {nombre}: {error}",
+    "salida": "Nos vemos, Emperador. Marcha atras metida. 🏁"
+  }
+}
