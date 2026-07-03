@@ -41,10 +41,12 @@ class Overlay:
                 return info.get("color", "#4ade80")
         return "#4ade80"
 
-    def cambio_marcha(self, nombre_modo):
+    def cambio_marcha(self, nombre_modo, color=None):
         if not self.activo:
             return
-        color = self._color_de(nombre_modo)
+        # Si main.py pasa el color (titulo dinamico que no esta en 'marchas'),
+        # lo usamos; si no, lo buscamos por el nombre del modo.
+        color = color if color else self._color_de(nombre_modo)
 
         # Mata el overlay anterior si sigue vivo (reemplazo, no apilar)
         if self._proc and self._proc.poll() is None:
