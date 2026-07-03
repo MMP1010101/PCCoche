@@ -114,6 +114,11 @@
     "_comentario": "Gesto AND para abrir el programa de la marcha activa: embrague pisado (< umbral embrague_and) Y acelerador a fondo (<= umbral acelerador_si), los dos a la vez. Anti-repeticion: solo dispara una vez por gesto.",
     "activo": true
   },
+  "historial_apps": {
+    "_comentario": "Apps ya asignadas a alguna marcha, para re-asignarlas rapido sin buscar. Las mas recientes primero, sin duplicados, maximo 'limite'. Se llena solo al asignar.",
+    "limite": 12,
+    "items": []
+  },
   "filtro_apps": {
     "_comentario": "Filtra la lista del escaner. 'excluir': patrones (en nombre o ruta, sin mayus/minus) que se ocultan. 'excluir_ext': extensiones fuera. 'excluir_rutas': si la ruta contiene esto, fuera (salvo permitir_siempre). 'permitir_siempre': nombres que se salvan aunque coincidan con lo anterior (ej: cmd). Mejor pecar de limpio; si falta una app, anadela a permitir_siempre.",
     "excluir": [

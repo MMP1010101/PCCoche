@@ -74,6 +74,11 @@ Capítulos ya hechos y probados (ver `prompts/`):
   (regedit, system32, syswow64, winsxs...). Lista blanca `permitir_siempre` salva cmd,
   powershell, notepad, calc, etc. ("hasta el cmd es bueno"). Todo configurable en
   `settings.json > filtro_apps`. Probado: 137 → 78 apps, cmd conservado.
+- **Cap.7d ✅ HECHO: buscador primero + historial en la pizarra.** `config_gui.py` ya no
+  muestra el listón completo: buscador prominente arriba (escribes y aparecen resultados)
+  + fila de chips de historial (apps ya asignadas, para re-asignar sin buscar). Historial
+  persistido en `settings.json > historial_apps` (límite 12, sin duplicados, recientes
+  primero, solo entran las asignadas de verdad). Botón "Ver todas" discreto opcional.
 - **Cap.8 (siguiente): integrar el configurador con el G29.** Un botón del volante abre
   el configurador y PAUSA el runtime (el principal suelta el G29 para no pisarse); el
   configurador se maneja con el G29; el mismo botón GUARDA y CIERRA volviendo al runtime.

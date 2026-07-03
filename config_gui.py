@@ -74,9 +74,30 @@ class Pizarra(ctk.CTk):
         self._img_cache = {}      # ruta_png -> CTkImage
         self._arrastrando = None  # app en curso de arrastre
         self._fantasma = None     # etiqueta flotante durante el arrastre
+        self._ver_todas = False   # modo "ver todas" desactivado por defecto
 
         self._construir()
         self._cargar_apps()
+
+    # ---------- Historial ----------
+    def _historial(self):
+        return self.cfg.get("historial_apps", {}).get("items", [])
+
+    def _limite_historial(self):
+        return self.cfg.get("historial_apps", {}).get("limite", 12)
+
+    def _add_historial(self, app):
+        """Mete una app asignada al principio del historial, sin duplicados."""
+        h = self.cfg.setdefault("historial_apps", {"limite": 12, "items": []})
+        items = h.setdefault("items", [])
+        # quita duplicado por destino
+        items = [x for x in items if x.get("destino") != app.get("destino")]
+        items.insert(0, {
+            "nombre": app["nombre"],
+            "tipo": app.get("tipo", "app"),
+            "destino": app["destino"],
+        })
+        h["items"] = items[:h.get("limite", 12)]
 
     # ---------- UI ----------
     def _construir(self):
@@ -96,29 +117,42 @@ class Pizarra(ctk.CTk):
         cuerpo = ctk.CTkFrame(cont, fg_color=BG)
         cuerpo.pack(fill="both", expand=True)
 
-        # Panel izquierdo: lista/buscador de apps
+        # Panel izquierdo: historial + buscador + resultados
         izq = ctk.CTkFrame(cuerpo, fg_color=PANEL, corner_radius=16, width=320)
         izq.pack(side="left", fill="y", padx=(0, 16))
         izq.pack_propagate(False)
 
-        ctk.CTkLabel(izq, text="Apps del PC", font=("Segoe UI", 15, "bold"),
-                     text_color=TXT).pack(anchor="w", padx=16, pady=(16, 8))
+        # -- Historial (chips de apps ya asignadas) --
+        self.lbl_hist = ctk.CTkLabel(izq, text="Recientes",
+                                     font=("Segoe UI", 13, "bold"),
+                                     text_color=TXT_DIM)
+        self.lbl_hist.pack(anchor="w", padx=16, pady=(16, 6))
+        self.cont_hist = ctk.CTkFrame(izq, fg_color=PANEL)
+        self.cont_hist.pack(fill="x", padx=12)
 
-        self.buscador = ctk.CTkEntry(izq, placeholder_text="Buscar app...",
-                                     height=38, corner_radius=10,
-                                     fg_color=PANEL_2, border_width=0)
-        self.buscador.pack(fill="x", padx=16)
+        # -- Buscador prominente --
+        self.buscador = ctk.CTkEntry(
+            izq, placeholder_text="🔍  Escribe el nombre de tu app...",
+            height=44, corner_radius=12, fg_color=PANEL_2, border_width=0,
+            font=("Segoe UI", 14))
+        self.buscador.pack(fill="x", padx=16, pady=(14, 6))
         self.buscador.bind("<KeyRelease>", lambda e: self._filtrar())
 
-        self.lista = ctk.CTkScrollableFrame(izq, fg_color=PANEL,
-                                            corner_radius=0)
-        self.lista.pack(fill="both", expand=True, padx=8, pady=12)
+        # -- Resultados de busqueda (vacio al inicio) --
+        self.lista = ctk.CTkScrollableFrame(izq, fg_color=PANEL, corner_radius=0)
+        self.lista.pack(fill="both", expand=True, padx=8, pady=(6, 6))
 
-        # Boton anadir web
-        ctk.CTkButton(izq, text="+ Anadir web (URL)", height=40,
+        # -- Pie: ver todas + anadir web --
+        pie = ctk.CTkFrame(izq, fg_color=PANEL)
+        pie.pack(fill="x", padx=16, pady=(0, 16))
+        self.btn_todas = ctk.CTkButton(
+            pie, text="Ver todas", height=34, corner_radius=10,
+            fg_color=PANEL_2, hover_color=PLACE, text_color=TXT_DIM,
+            font=("Segoe UI", 12), command=self._toggle_todas)
+        self.btn_todas.pack(fill="x", pady=(0, 8))
+        ctk.CTkButton(pie, text="+ Anadir web (URL)", height=40,
                       corner_radius=10, fg_color=PANEL_2, hover_color=PLACE,
-                      text_color=TXT, command=self._dialogo_web).pack(
-            fill="x", padx=16, pady=(0, 16))
+                      text_color=TXT, command=self._dialogo_web).pack(fill="x")
 
         # Panel derecho: los 6 huecos
         der = ctk.CTkFrame(cuerpo, fg_color=BG)
@@ -184,11 +218,47 @@ class Pizarra(ctk.CTk):
 
     def _cargar_apps(self):
         self.apps = escanear_apps()
-        self._render_lista(self.apps)
+        self._render_historial()
+        self._render_lista([])  # al inicio, sin listón: solo historial + buscador
 
     def _filtrar(self):
         t = self.buscador.get()
-        self._render_lista(buscar(self.apps, t) if t.strip() else self.apps)
+        if t.strip():
+            self._ver_todas = False
+            self._render_lista(buscar(self.apps, t))
+        else:
+            self._render_lista(self.apps if self._ver_todas else [])
+
+    def _toggle_todas(self):
+        self._ver_todas = not self._ver_todas
+        self.btn_todas.configure(text="Ocultar" if self._ver_todas else "Ver todas")
+        self._render_lista(self.apps if self._ver_todas else [])
+
+    def _render_historial(self):
+        for w in self.cont_hist.winfo_children():
+            w.destroy()
+        hist = self._historial()
+        if not hist:
+            self.lbl_hist.configure(text="Recientes  ·  aun no hay, asigna una app")
+            return
+        self.lbl_hist.configure(text="Recientes")
+        # chips en rejilla de 2 columnas
+        for i, app in enumerate(hist):
+            chip = ctk.CTkFrame(self.cont_hist, fg_color=PANEL_2, corner_radius=10)
+            chip.grid(row=i // 2, column=i % 2, padx=4, pady=4, sticky="ew")
+            self.cont_hist.grid_columnconfigure(i % 2, weight=1)
+            png = extraer_icono(app["destino"]) if app.get("tipo") == "app" else None
+            cim = self._ctk_img(png, 22)
+            ic = ctk.CTkLabel(chip, text="" if cim else "🌐", image=cim,
+                              width=26, text_color=TXT_DIM)
+            ic.pack(side="left", padx=(8, 4), pady=6)
+            lbl = ctk.CTkLabel(chip, text=app["nombre"][:14], font=("Segoe UI", 12),
+                               text_color=TXT, anchor="w")
+            lbl.pack(side="left", fill="x", expand=True, padx=(0, 6))
+            for w in (chip, ic, lbl):
+                w.bind("<Button-1>", lambda e, a=app: self._empezar_arrastre(a, e))
+                w.bind("<B1-Motion>", self._mover_arrastre)
+                w.bind("<ButtonRelease-1>", self._soltar_arrastre)
 
     def _render_lista(self, apps):
         for w in self.lista.winfo_children():
@@ -254,13 +324,16 @@ class Pizarra(ctk.CTk):
 
     # ---------- Asignar / vaciar / guardar ----------
     def _asignar(self, modo, app):
-        self.cfg.setdefault("programas", {})[str(modo)] = {
+        entrada = {
             "nombre": app["nombre"],
-            "tipo": "app",
+            "tipo": app.get("tipo", "app"),
             "destino": app["destino"],
         }
+        self.cfg.setdefault("programas", {})[str(modo)] = entrada
+        self._add_historial(entrada)
         guardar(self.cfg)
         self._refrescar_hueco(modo)
+        self._render_historial()
 
     def _vaciar(self, modo):
         progs = self.cfg.setdefault("programas", {})
@@ -310,12 +383,15 @@ class Pizarra(ctk.CTk):
             if not url:
                 return
             modo = int(m.get())
-            self.cfg.setdefault("programas", {})[str(modo)] = {
+            entrada = {
                 "nombre": n.get().strip() or f"Modo {modo}",
                 "tipo": "url", "destino": url,
             }
+            self.cfg.setdefault("programas", {})[str(modo)] = entrada
+            self._add_historial(entrada)
             guardar(self.cfg)
             self._refrescar_hueco(modo)
+            self._render_historial()
             dlg.destroy()
 
         ctk.CTkButton(dlg, text="Guardar", height=40, command=ok).pack(
