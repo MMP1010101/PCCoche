@@ -90,9 +90,9 @@
       "destino": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
     },
     "3": {
-      "nombre": "chatGPT",
-      "tipo": "url",
-      "destino": ""
+      "nombre": "CapCut",
+      "tipo": "app",
+      "destino": "C:\\Users\\manci\\AppData\\Local\\CapCut\\Apps\\CapCut.exe"
     },
     "4": {
       "nombre": "github",
@@ -131,9 +131,9 @@
       "atajos_marcha": {
         "1": "captura",
         "2": "cambiar_ventana",
-        "3": "copiar",
-        "4": "pegar",
-        "5": "seleccionar_todo",
+        "3": "mover_pantalla",
+        "4": "",
+        "5": "dividir_pantalla",
         "6": ""
       }
     }
@@ -200,20 +200,12 @@
       "nombre": "Mostrar escritorio",
       "teclas": "win+d"
     },
-    "mover_pantalla_der": {
-      "nombre": "Mover a la otra pantalla (derecha)",
-      "teclas": "win+shift+right"
-    },
-    "mover_pantalla_izq": {
-      "nombre": "Mover a la otra pantalla (izquierda)",
+    "mover_pantalla": {
+      "nombre": "Mover a la otra pantalla",
       "teclas": "win+shift+left"
     },
-    "dividir_der": {
-      "nombre": "Dividir pantalla (derecha)",
-      "teclas": "win+right"
-    },
-    "dividir_izq": {
-      "nombre": "Dividir pantalla (izquierda)",
+    "dividir_pantalla": {
+      "nombre": "Dividir pantalla",
       "teclas": "win+left"
     }
   },
@@ -225,6 +217,11 @@
     "_comentario": "Apps ya asignadas a alguna marcha, para re-asignarlas rapido sin buscar. Las mas recientes primero, sin duplicados, maximo 'limite'. Se llena solo al asignar.",
     "limite": 12,
     "items": [
+      {
+        "nombre": "CapCut",
+        "tipo": "app",
+        "destino": "C:\\Users\\manci\\AppData\\Local\\CapCut\\Apps\\CapCut.exe"
+      },
       {
         "nombre": "Visual Studio Code",
         "tipo": "app",

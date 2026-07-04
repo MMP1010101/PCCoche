@@ -91,6 +91,17 @@ Capítulos ya hechos y probados (ver `prompts/`):
   de la marcha; ahora `modalities.titulo_marcha(modo)` devuelve el título según modalidad
   y lo asignado, con el número delante ("1 · Captura de pantalla", "6 · (sin app)"). El
   overlay recibe texto dinámico pero mantiene el color del gradiente de la marcha.
+- **🐛 BUG PENDIENTE (para arreglar próximo día):** en modalidad Atajos, las tarjetas de
+  los huecos muestran un icono VIEJO de app (ej. el logo de VSCode en "Cambiar de ventana").
+  Se repite un icono antiguo de la caché de apps en vez de un icono propio del atajo. Hay
+  que dar a los atajos su propio icono/placeholder y no reutilizar el de la app anterior.
+
+- **💡 IDEA FUTURA (le encanta): Modalidad IA.** Una modalidad que use una API de IA/LLM:
+  seleccionas un texto en pantalla, haces el gesto, y la IA lo lee y lo REESCRIBE mejor
+  (mejora el texto seleccionado con lo que dice la IA). Nota: habrá que acordarse de
+  conseguir/instalar la API key (él lo mencionó como "de Instagram guardados" pero era
+  solo un recordatorio de dónde sacar la API, NO una función de Instagram).
+
 - **Pendiente (más adelante):**
   - Cada uno de los 4 botones libres con su CONFIGURACIÓN PERSONAL, distinta por
     modalidad (Markitos dijo que hay más ideas, de momento solo esto).
