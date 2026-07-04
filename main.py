@@ -29,6 +29,7 @@ from core.overlay import Overlay
 from core.launcher import Launcher
 from core.modalities import GestorModalidades
 from core.shortcuts import Atajos
+from core.model_switch import CambiadorModelo
 
 
 RUTA_CONFIG = os.path.join(os.path.dirname(__file__), "config", "settings.json")
@@ -56,6 +57,7 @@ def main():
     launcher = Launcher(cfg, log)
     modalidades = GestorModalidades(cfg, log)
     atajos = Atajos(cfg, log)
+    cambiador_modelo = CambiadorModelo(cfg, log)
     gesto_activo = cfg.get("gesto_lanzar", {}).get("activo", True)
 
     botones_cara_ids = set(cfg.get("botones_cara", {}).get("ids", {}).keys())
@@ -163,6 +165,14 @@ def main():
                         atajos.ejecutar(clave)
                     else:
                         log("(esta marcha no tiene atajo asignado en este preset)")
+                elif modal == "claude":
+                    m = asignacion or {}
+                    comando = m.get("comando", "") if isinstance(m, dict) else ""
+                    nombre = m.get("nombre", "") if isinstance(m, dict) else ""
+                    if comando:
+                        cambiador_modelo.teclear(comando, nombre)
+                    else:
+                        log("(esta marcha no tiene modelo/comando en este preset)")
                 else:
                     prog = asignacion or {}
                     destino = (prog.get("destino") or "").strip() if isinstance(prog, dict) else ""

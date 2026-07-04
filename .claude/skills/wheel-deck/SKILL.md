@@ -125,12 +125,16 @@ Capítulos ya hechos y probados (ver `prompts/`):
   perder nada; quitó el interruptor viejo y el `core/buttons.py` ahora gestiona presets.
   Esta vez Claude SÍ respetó los fixes (trabajó sobre el zip completo del proyecto).
   Pendiente que Markitos verifique con test.py los botones de cara y lo pruebe.
+- **Cap.11 ✅ HECHO: modalidad "Claude" (cambiar de modelo).** Tercera modalidad en el
+  ciclo (apps→atajos→claude). `core/model_switch.py` teclea el comando de la marcha
+  (`/model <id>` + Enter) en la ventana enfocada con la librería keyboard. Cada marcha
+  guarda `{nombre, comando}`; catálogo `catalogo_modelos` editable. Preset △ Normal
+  mapeado: Sonnet 5, Opus 4.8, Fable 5 (con comando), y los de esfuerzo (alto/alto+razon/
+  extra) con comando VACÍO para que Markitos ponga el suyo. Glifo 🤖, títulos dinámicos.
+  Pendiente: Markitos pone los comandos de esfuerzo y verifica tecleando en su Claude.
 
 - **Pendiente (más adelante):**
-  - Modalidad "Modelos de Claude" (Cap.11, en curso): cada marcha teclea `/model <id>`
-    en la ventana enfocada (librería keyboard). 6 modelos = 6 marchas. Comando editable
-    por marcha. Ojo: el nivel de esfuerzo puede no cambiarse con /model.
-  - Otras filosofías nuevas.
+  - Otras filosofías nuevas (modalidad IA con API, aceptar/rechazar Claude, etc.).
   - Abrir el configurador con un botón del G29 (pausar runtime, soltar el volante, mismo
     botón guarda y cierra).
 

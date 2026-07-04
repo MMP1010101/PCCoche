@@ -84,6 +84,13 @@ class GestorModalidades:
             if clave and cat:
                 return f"{modo} \u00b7 {cat.get('nombre', clave)}"
             return f"{modo} \u00b7 (sin atajo)"
+        elif self.actual == "claude":
+            m = marchas.get(str(modo), {}) or {}
+            nombre = m.get("nombre", "")
+            comando = m.get("comando", "")
+            if nombre or comando:
+                return f"{modo} \u00b7 {nombre or comando}"
+            return f"{modo} \u00b7 (sin modelo)"
         else:
             prog = marchas.get(str(modo), {}) or {}
             destino = prog.get("destino", "")

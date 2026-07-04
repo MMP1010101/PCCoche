@@ -143,9 +143,9 @@ class Pizarra(ctk.CTk):
                      font=("Segoe UI", 13), text_color=TXT_DIM).pack(
             side="left", padx=(10, 0), pady=(8, 0))
 
-        # Selector de modalidad a configurar: Apps / Atajos
+        # Selector de modalidad a configurar: Apps / Atajos / Claude
         self.sel_modo = ctk.CTkSegmentedButton(
-            head, values=["Apps", "Atajos"],
+            head, values=["Apps", "Atajos", "Claude"],
             command=self._cambiar_modo_config,
             font=("Segoe UI", 13, "bold"))
         self.sel_modo.set("Apps")
@@ -276,14 +276,22 @@ class Pizarra(ctk.CTk):
             return None
 
     def _cambiar_modo_config(self, valor):
-        self._modo_config = "atajos" if valor == "Atajos" else "apps"
+        if valor == "Atajos":
+            self._modo_config = "atajos"
+        elif valor == "Claude":
+            self._modo_config = "claude"
+        else:
+            self._modo_config = "apps"
         self.buscador.delete(0, "end")
         self._ver_todas = False
         if self._modo_config == "atajos":
             self.buscador.configure(
                 placeholder_text="🔍  Busca un atajo (copiar, captura...)")
-            # en atajos mostramos el catalogo entero (es corto y seguro)
             self._render_lista(self._catalogo_atajos_lista())
+        elif self._modo_config == "claude":
+            self.buscador.configure(
+                placeholder_text="🤖  Busca un modelo (sonnet, opus, fable...)")
+            self._render_lista(self._catalogo_modelos_lista())
         else:
             self.buscador.configure(
                 placeholder_text="🔍  Escribe el nombre de tu app...")
@@ -353,6 +361,21 @@ class Pizarra(ctk.CTk):
         return [a for a in self._catalogo_atajos_lista()
                 if t in a["nombre"].lower() or t in a["destino"].lower()]
 
+    def _catalogo_modelos_lista(self):
+        cat = self.cfg.get("catalogo_modelos", {})
+        out = []
+        for clave, item in cat.items():
+            if isinstance(item, dict) and "nombre" in item:
+                out.append({"nombre": item.get("nombre", clave),
+                            "tipo": "modelo", "destino": clave,
+                            "comando": item.get("comando", "")})
+        return sorted(out, key=lambda a: a["nombre"].lower())
+
+    def _buscar_modelos(self, texto):
+        t = texto.strip().lower()
+        return [a for a in self._catalogo_modelos_lista()
+                if t in a["nombre"].lower() or t in a.get("comando", "").lower()]
+
     def _cargar_apps(self):
         self.apps = escanear_apps()
         self._render_historial()
@@ -363,6 +386,10 @@ class Pizarra(ctk.CTk):
         if self._modo_config == "atajos":
             self._render_lista(self._buscar_atajos(t) if t.strip()
                                else self._catalogo_atajos_lista())
+            return
+        if self._modo_config == "claude":
+            self._render_lista(self._buscar_modelos(t) if t.strip()
+                               else self._catalogo_modelos_lista())
             return
         if t.strip():
             self._ver_todas = False
@@ -412,6 +439,7 @@ class Pizarra(ctk.CTk):
         fila.pack(fill="x", pady=4, padx=4)
 
         es_atajo = app.get("tipo") == "atajo"
+        es_modelo = app.get("tipo") == "modelo"
         if es_atajo:
             ic = ctk.CTkLabel(fila, text=glifo_de_atajo(app.get("destino", "")),
                               width=32, font=("Segoe UI", 18), text_color=TXT_DIM)
@@ -419,6 +447,13 @@ class Pizarra(ctk.CTk):
             texto = f"{app['nombre']}   {app.get('teclas','')}"
             lbl = ctk.CTkLabel(fila, text=texto, font=("Segoe UI", 13),
                                text_color=TXT, anchor="w")
+        elif es_modelo:
+            ic = ctk.CTkLabel(fila, text="🤖", width=32, font=("Segoe UI", 18),
+                              text_color=TXT_DIM)
+            ic.pack(side="left", padx=(10, 8), pady=8)
+            cmd = app.get("comando", "") or "(sin comando, editalo)"
+            lbl = ctk.CTkLabel(fila, text=f"{app['nombre']}   {cmd}",
+                               font=("Segoe UI", 13), text_color=TXT, anchor="w")
         else:
             png = extraer_icono(app["destino"])
             cim = self._ctk_img(png, 28)
@@ -480,6 +515,14 @@ class Pizarra(ctk.CTk):
             guardar(self.cfg)
             self._refrescar_hueco(modo)
             return
+        if self._modo_config == "claude" or app.get("tipo") == "modelo":
+            marchas[str(modo)] = {
+                "nombre": app["nombre"],
+                "comando": app.get("comando", ""),
+            }
+            guardar(self.cfg)
+            self._refrescar_hueco(modo)
+            return
         entrada = {
             "nombre": app["nombre"],
             "tipo": app.get("tipo", "app"),
@@ -495,6 +538,8 @@ class Pizarra(ctk.CTk):
         marchas = self._marchas_preset()
         if self._modo_config == "atajos":
             marchas[str(modo)] = ""
+        elif self._modo_config == "claude":
+            marchas[str(modo)] = {"nombre": "", "comando": ""}
         else:
             marchas[str(modo)] = {"nombre": "", "tipo": "app", "destino": ""}
         guardar(self.cfg)
@@ -514,6 +559,18 @@ class Pizarra(ctk.CTk):
                     text_color=TXT)
             else:
                 h["texto"].configure(text="vacio  ·  arrastra un atajo aqui",
+                                     text_color=TXT_DIM)
+            return
+        if self._modo_config == "claude":
+            m = marchas.get(str(modo), {}) or {}
+            nombre = m.get("nombre", "")
+            comando = m.get("comando", "")
+            h["icono"].configure(image="", text="🤖" if nombre else "")
+            if nombre:
+                cmd_txt = comando if comando else "(sin comando, editalo)"
+                h["texto"].configure(text=f"{nombre}\n{cmd_txt}", text_color=TXT)
+            else:
+                h["texto"].configure(text="vacio  ·  arrastra un modelo aqui",
                                      text_color=TXT_DIM)
             return
         prog = marchas.get(str(modo), {}) or {}

@@ -88,7 +88,8 @@
     "_comentario": "Cada modalidad cambia lo que hacen las 6 marchas. 'orden' define el ciclo de las levas. Anade mas modalidades aqui.",
     "orden": [
       "apps",
-      "atajos"
+      "atajos",
+      "claude"
     ],
     "apps": {
       "nombre": "APPS",
@@ -293,6 +294,132 @@
           }
         }
       }
+    },
+    "claude": {
+      "nombre": "CLAUDE",
+      "_comentario": "Cada marcha teclea un comando (ej /model ...) + Enter en la ventana enfocada. Ten la ventana de Claude enfocada al disparar.",
+      "presets": {
+        "0": {
+          "simbolo": "✕",
+          "nombre": "Preset X",
+          "marchas": {
+            "1": {
+              "nombre": "",
+              "comando": ""
+            },
+            "2": {
+              "nombre": "",
+              "comando": ""
+            },
+            "3": {
+              "nombre": "",
+              "comando": ""
+            },
+            "4": {
+              "nombre": "",
+              "comando": ""
+            },
+            "5": {
+              "nombre": "",
+              "comando": ""
+            },
+            "6": {
+              "nombre": "",
+              "comando": ""
+            }
+          }
+        },
+        "1": {
+          "simbolo": "□",
+          "nombre": "Preset □",
+          "marchas": {
+            "1": {
+              "nombre": "",
+              "comando": ""
+            },
+            "2": {
+              "nombre": "",
+              "comando": ""
+            },
+            "3": {
+              "nombre": "",
+              "comando": ""
+            },
+            "4": {
+              "nombre": "",
+              "comando": ""
+            },
+            "5": {
+              "nombre": "",
+              "comando": ""
+            },
+            "6": {
+              "nombre": "",
+              "comando": ""
+            }
+          }
+        },
+        "2": {
+          "simbolo": "○",
+          "nombre": "Preset ○",
+          "marchas": {
+            "1": {
+              "nombre": "",
+              "comando": ""
+            },
+            "2": {
+              "nombre": "",
+              "comando": ""
+            },
+            "3": {
+              "nombre": "",
+              "comando": ""
+            },
+            "4": {
+              "nombre": "",
+              "comando": ""
+            },
+            "5": {
+              "nombre": "",
+              "comando": ""
+            },
+            "6": {
+              "nombre": "",
+              "comando": ""
+            }
+          }
+        },
+        "3": {
+          "simbolo": "△",
+          "nombre": "Normal",
+          "marchas": {
+            "1": {
+              "nombre": "Sonnet 5",
+              "comando": "/model claude-sonnet-5"
+            },
+            "2": {
+              "nombre": "Opus 4.8",
+              "comando": "/model claude-opus-4-8"
+            },
+            "3": {
+              "nombre": "Opus 4.8 alto",
+              "comando": ""
+            },
+            "4": {
+              "nombre": "Opus 4.8 alto+razonamiento",
+              "comando": ""
+            },
+            "5": {
+              "nombre": "Opus 4.8 extra",
+              "comando": ""
+            },
+            "6": {
+              "nombre": "Fable 5",
+              "comando": "/model claude-fable-5"
+            }
+          }
+        }
+      }
     }
   },
   "catalogo_atajos": {
@@ -491,5 +618,36 @@
       "3": "△"
     },
     "preset_por_defecto": "3"
+  },
+  "catalogo_modelos": {
+    "_comentario": "Comandos de modelo para la modalidad Claude. clave -> {nombre, comando}. El comando se teclea tal cual + Enter en la ventana enfocada. Los de esfuerzo (alto/extra/razonamiento) los rellena Markitos.",
+    "sonnet5": {
+      "nombre": "Sonnet 5",
+      "comando": "/model claude-sonnet-5"
+    },
+    "opus48": {
+      "nombre": "Opus 4.8",
+      "comando": "/model claude-opus-4-8"
+    },
+    "fable5": {
+      "nombre": "Fable 5",
+      "comando": "/model claude-fable-5"
+    },
+    "haiku45": {
+      "nombre": "Haiku 4.5",
+      "comando": "/model claude-haiku-4-5-20251001"
+    },
+    "opus48_alto": {
+      "nombre": "Opus 4.8 alto",
+      "comando": ""
+    },
+    "opus48_razon": {
+      "nombre": "Opus 4.8 alto+razonamiento",
+      "comando": ""
+    },
+    "opus48_extra": {
+      "nombre": "Opus 4.8 extra",
+      "comando": ""
+    }
   }
 }
