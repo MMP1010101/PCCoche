@@ -80,14 +80,14 @@
   "programas": {
     "_comentario": "Que abre cada marcha. tipo 'url' -> abre en el navegador. tipo 'app' -> ejecuta ruta/comando. Rellena 'destino' con la URL o la ruta exacta del .exe. Ejemplos de ruta app: VSCode 'C:/Users/TU/AppData/Local/Programs/Microsoft VS Code/Code.exe'; CapCut suele estar en 'C:/Users/TU/AppData/Local/CapCut/...'. Si dejas destino vacio, avisa y no abre.",
     "1": {
-      "nombre": "Claude",
+      "nombre": "chatGPT",
       "tipo": "url",
-      "destino": ""
+      "destino": "https://chatgpt.com/es-ES/"
     },
     "2": {
       "nombre": "Visual Studio Code",
       "tipo": "app",
-      "destino": ""
+      "destino": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
     },
     "3": {
       "nombre": "chatGPT",
@@ -129,11 +129,11 @@
       "nombre": "ATAJOS",
       "_comentario": "Las 6 marchas ejecutan atajos de teclado (asignados en 'atajos_marcha').",
       "atajos_marcha": {
-        "1": "",
-        "2": "",
-        "3": "",
-        "4": "",
-        "5": "",
+        "1": "captura",
+        "2": "cambiar_ventana",
+        "3": "copiar",
+        "4": "pegar",
+        "5": "seleccionar_todo",
         "6": ""
       }
     }
@@ -199,6 +199,22 @@
     "escritorio": {
       "nombre": "Mostrar escritorio",
       "teclas": "win+d"
+    },
+    "mover_pantalla_der": {
+      "nombre": "Mover a la otra pantalla (derecha)",
+      "teclas": "win+shift+right"
+    },
+    "mover_pantalla_izq": {
+      "nombre": "Mover a la otra pantalla (izquierda)",
+      "teclas": "win+shift+left"
+    },
+    "dividir_der": {
+      "nombre": "Dividir pantalla (derecha)",
+      "teclas": "win+right"
+    },
+    "dividir_izq": {
+      "nombre": "Dividir pantalla (izquierda)",
+      "teclas": "win+left"
     }
   },
   "gesto_lanzar": {
@@ -210,9 +226,9 @@
     "limite": 12,
     "items": [
       {
-        "nombre": "github",
-        "tipo": "url",
-        "destino": "https://github.com/MMP1010101/PCCoche/tree/main"
+        "nombre": "Visual Studio Code",
+        "tipo": "app",
+        "destino": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
       },
       {
         "nombre": "chatGPT",
@@ -220,14 +236,14 @@
         "destino": "https://chatgpt.com/es-ES/"
       },
       {
+        "nombre": "github",
+        "tipo": "url",
+        "destino": "https://github.com/MMP1010101/PCCoche/tree/main"
+      },
+      {
         "nombre": "7-Zip File Manager",
         "tipo": "app",
         "destino": "C:\\Program Files\\7-Zip\\7zFM.exe"
-      },
-      {
-        "nombre": "Visual Studio Code",
-        "tipo": "app",
-        "destino": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
       }
     ]
   },
