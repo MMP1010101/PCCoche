@@ -127,7 +127,10 @@ Capítulos ya hechos y probados (ver `prompts/`):
   Pendiente que Markitos verifique con test.py los botones de cara y lo pruebe.
 
 - **Pendiente (más adelante):**
-  - Modalidad "Modelos de Claude" y otras filosofías nuevas.
+  - Modalidad "Modelos de Claude" (Cap.11, en curso): cada marcha teclea `/model <id>`
+    en la ventana enfocada (librería keyboard). 6 modelos = 6 marchas. Comando editable
+    por marcha. Ojo: el nivel de esfuerzo puede no cambiarse con /model.
+  - Otras filosofías nuevas.
   - Abrir el configurador con un botón del G29 (pausar runtime, soltar el volante, mismo
     botón guarda y cierra).
 
