@@ -21,6 +21,8 @@ class Overlay:
         self.activo = o.get("activo", True)
         self.duracion = o.get("duracion", 2.0)
         self.esquina = o.get("esquina", "bottom-right")
+        self.esquina_marcha = o.get("esquina_marcha", self.esquina)
+        self.esquina_modalidad = o.get("esquina_modalidad", "top-right")
         self.margen = o.get("margen", 24)
         self.ancho = o.get("ancho", 320)
         self.alto = o.get("alto", 110)
@@ -41,12 +43,12 @@ class Overlay:
                 return info.get("color", "#4ade80")
         return "#4ade80"
 
-    def cambio_marcha(self, nombre_modo, color=None):
+    def cambio_marcha(self, nombre_modo, color=None, esquina=None):
         if not self.activo:
             return
-        # Si main.py pasa el color (titulo dinamico que no esta en 'marchas'),
-        # lo usamos; si no, lo buscamos por el nombre del modo.
-        color = color if color else self._color_de(nombre_modo)
+        if color is None:
+            color = self._color_de(nombre_modo)
+        esq = esquina or self.esquina
 
         # Mata el overlay anterior si sigue vivo (reemplazo, no apilar)
         if self._proc and self._proc.poll() is None:
@@ -57,7 +59,7 @@ class Overlay:
 
         args = [
             sys.executable, "-m", "core.overlay_window",
-            nombre_modo, color, str(self.duracion), self.esquina,
+            nombre_modo, color, str(self.duracion), esq,
             str(self.margen), str(self.ancho), str(self.alto),
             "1" if self.fade else "0", self.color_texto,
         ]

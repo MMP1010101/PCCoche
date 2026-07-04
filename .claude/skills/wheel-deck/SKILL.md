@@ -91,10 +91,13 @@ Capítulos ya hechos y probados (ver `prompts/`):
   de la marcha; ahora `modalities.titulo_marcha(modo)` devuelve el título según modalidad
   y lo asignado, con el número delante ("1 · Captura de pantalla", "6 · (sin app)"). El
   overlay recibe texto dinámico pero mantiene el color del gradiente de la marcha.
-- **🐛 BUG PENDIENTE (para arreglar próximo día):** en modalidad Atajos, las tarjetas de
-  los huecos muestran un icono VIEJO de app (ej. el logo de VSCode en "Cambiar de ventana").
-  Se repite un icono antiguo de la caché de apps en vez de un icono propio del atajo. Hay
-  que dar a los atajos su propio icono/placeholder y no reutilizar el de la app anterior.
+- **Cap.9 ✅ HECHO:** (1) fix del icono de atajos (ahora usan glifos/emoji propios,
+  `GLIFO_ATAJO` en config_gui, no heredan iconos de apps); (2) `core/buttons.py` +
+  sección `botones` en settings: 4 botones (ids 2,3,6,7 por defecto, VERIFICAR con
+  test.py) con acción configurable y distinta por modalidad; (3) alertas por posición:
+  leva/modalidad arriba-der, marcha abajo-der (`overlay.esquina_modalidad/marcha`).
+  ⚠️ Claude volvió a meter el bug de `_cargar_apps` (código muerto) — reaplicado el fix
+  local. Reincidente: recordárselo siempre.
 
 - **💡 IDEA FUTURA (le encanta): Modalidad IA.** Una modalidad que use una API de IA/LLM:
   seleccionas un texto en pantalla, haces el gesto, y la IA lo lee y lo REESCRIBE mejor

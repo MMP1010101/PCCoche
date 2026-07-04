@@ -71,6 +71,8 @@
     "activo": true,
     "duracion": 2.0,
     "esquina": "bottom-right",
+    "esquina_marcha": "bottom-right",
+    "esquina_modalidad": "top-right",
     "margen": 24,
     "ancho": 320,
     "alto": 110,
@@ -207,6 +209,53 @@
     "dividir_pantalla": {
       "nombre": "Dividir pantalla",
       "teclas": "win+left"
+    }
+  },
+  "botones": {
+    "_comentario": "4 botones configurables, con accion DISTINTA por modalidad. 'ids' = numeros del G29 (VERIFICAR con tests/test.py; 0,1 los usa el interruptor Modo1, 2,3 estaban libres). Cada accion: {tipo: 'app'|'atajo'|'nada', valor: ruta-o-clave}. Amplia con mas tipos en el futuro.",
+    "ids": [
+      2,
+      3,
+      6,
+      7
+    ],
+    "acciones": {
+      "apps": {
+        "2": {
+          "tipo": "nada",
+          "valor": ""
+        },
+        "3": {
+          "tipo": "nada",
+          "valor": ""
+        },
+        "6": {
+          "tipo": "nada",
+          "valor": ""
+        },
+        "7": {
+          "tipo": "nada",
+          "valor": ""
+        }
+      },
+      "atajos": {
+        "2": {
+          "tipo": "atajo",
+          "valor": "copiar"
+        },
+        "3": {
+          "tipo": "atajo",
+          "valor": "pegar"
+        },
+        "6": {
+          "tipo": "nada",
+          "valor": ""
+        },
+        "7": {
+          "tipo": "nada",
+          "valor": ""
+        }
+      }
     }
   },
   "gesto_lanzar": {

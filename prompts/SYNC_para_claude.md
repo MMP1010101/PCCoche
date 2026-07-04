@@ -12,10 +12,11 @@ FIXES DE CÓDIGO (importantes, no revertir):
    se pasa color, se busca por nombre (compatibilidad). SIN esto, main.py peta con
    TypeError.
 2. config_gui.py -> método _cargar_apps(self) restaurado:
-   En la versión del Cap.8, tres líneas (self.apps = escanear_apps() + _render_historial
-   + _render_lista) quedaron como CÓDIGO MUERTO tras el return de _buscar_atajos, y
-   _cargar_apps no existía -> AttributeError al abrir la pizarra. Debe ser su propio
-   método y llamarse desde __init__.
+   ⚠️ BUG REINCIDENTE (pasó en Cap.8 y OTRA VEZ en Cap.9). Las líneas (self.apps =
+   escanear_apps() + _render_historial + _render_lista) quedan como CÓDIGO MUERTO tras
+   el return de _buscar_atajos, y _cargar_apps no existe -> AttributeError al abrir la
+   pizarra. DEBE ser su propio método `def _cargar_apps(self):` justo después de
+   _buscar_atajos, y llamarse desde __init__. NO lo vuelvas a meter dentro de otra función.
 
 CONFIG (settings.json) añadida/ajustada a mano:
 3. g29.ejes: acelerador 1, freno 2, embrague 3 (4 ejes; el volante es eje 0 sin usar).

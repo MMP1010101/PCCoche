@@ -22,6 +22,21 @@ class Launcher:
     def _prog_de_modo(self, modo):
         return self.programas.get(str(modo))
 
+    def abrir_destino(self, destino):
+        """Abre una ruta/URL directa (para acciones de botones). True si intento."""
+        destino = (destino or "").strip()
+        if not destino:
+            return False
+        try:
+            if destino.lower().startswith(("http://", "https://")):
+                webbrowser.open(destino)
+            else:
+                self._abrir_app(destino)
+            return True
+        except Exception as e:
+            self.log(f"(no pude abrir {destino}: {e})")
+            return False
+
     def lanzar(self, modo):
         """Abre el programa del modo dado. Devuelve True si lo intento."""
         prog = self._prog_de_modo(modo)

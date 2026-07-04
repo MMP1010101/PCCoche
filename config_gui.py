@@ -52,6 +52,21 @@ TXT_DIM   = "#8b909c"
 PLACE     = "#2a2e38"
 
 
+# Glifo (emoji) por atajo, para que cada uno tenga su icono propio y no herede
+# el de una app. Fallback: teclado.
+GLIFO_ATAJO = {
+    "copiar": "📋", "pegar": "📌", "cortar": "✂", "deshacer": "↩",
+    "rehacer": "↪", "seleccionar_todo": "🔲", "guardar": "💾",
+    "buscar": "🔍", "captura": "📸", "cambiar_ventana": "🪟",
+    "nueva_pestana": "➕", "cerrar_pestana": "✖", "zoom_mas": "🔎",
+    "zoom_menos": "🔍", "escritorio": "🖥",
+}
+
+
+def glifo_de_atajo(clave):
+    return GLIFO_ATAJO.get(clave, "⌨")
+
+
 def cargar():
     with open(RUTA_CONFIG, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -317,8 +332,8 @@ class Pizarra(ctk.CTk):
 
         es_atajo = app.get("tipo") == "atajo"
         if es_atajo:
-            ic = ctk.CTkLabel(fila, text="⌨", width=32, font=("Segoe UI", 18),
-                              text_color=TXT_DIM)
+            ic = ctk.CTkLabel(fila, text=glifo_de_atajo(app.get("destino", "")),
+                              width=32, font=("Segoe UI", 18), text_color=TXT_DIM)
             ic.pack(side="left", padx=(10, 8), pady=8)
             texto = f"{app['nombre']}   {app.get('teclas','')}"
             lbl = ctk.CTkLabel(fila, text=texto, font=("Segoe UI", 13),
@@ -418,7 +433,8 @@ class Pizarra(ctk.CTk):
                 "atajos_marcha", {})
             clave = mapa.get(str(modo), "")
             cat = self.cfg.get("catalogo_atajos", {}).get(clave, {})
-            h["icono"].configure(image=None, text="⌨" if clave else "")
+            # image="" limpia de verdad cualquier icono de app heredado
+            h["icono"].configure(image="", text=glifo_de_atajo(clave) if clave else "")
             if clave and cat:
                 h["texto"].configure(
                     text=f"{cat.get('nombre', clave)}\n{cat.get('teclas','')}",
@@ -433,11 +449,11 @@ class Pizarra(ctk.CTk):
         if destino:
             png = extraer_icono(destino) if prog.get("tipo") == "app" else None
             cim = self._ctk_img(png, 40)
-            h["icono"].configure(image=cim, text="" if cim else "▦")
+            h["icono"].configure(image=cim if cim else "", text="" if cim else "🌐")
             tipo_txt = "web" if prog.get("tipo") == "url" else "app"
             h["texto"].configure(text=f"{nombre}\n{tipo_txt}", text_color=TXT)
         else:
-            h["icono"].configure(image=None, text="")
+            h["icono"].configure(image="", text="")
             h["texto"].configure(text="vacio  ·  arrastra una app aqui",
                                  text_color=TXT_DIM)
 

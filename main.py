@@ -30,6 +30,7 @@ from core.overlay import Overlay
 from core.launcher import Launcher
 from core.modalities import GestorModalidades
 from core.shortcuts import Atajos
+from core.buttons import Botones
 
 
 RUTA_CONFIG = os.path.join(os.path.dirname(__file__), "config", "settings.json")
@@ -58,6 +59,7 @@ def main():
     launcher = Launcher(cfg, log)
     modalidades = GestorModalidades(cfg, log)
     atajos = Atajos(cfg, log)
+    botones = Botones(cfg, log, launcher, atajos)
     gesto_activo = cfg.get("gesto_lanzar", {}).get("activo", True)
 
     levas_cfg = cfg.get("levas", {})
@@ -96,7 +98,8 @@ def main():
                         modalidades.anterior()
                     etiqueta = f"MODO: {modalidades.nombre_actual}"
                     log(f">> {etiqueta}")
-                    overlay.cambio_marcha(etiqueta)
+                    overlay.cambio_marcha(etiqueta,
+                                          esquina=overlay.esquina_modalidad)
                     continue
 
                 info = modos.marcha_pulsada(b)
@@ -115,12 +118,15 @@ def main():
                         log(msg["cambio_modo"].format(nombre=titulo))
                         log(msg["modo_activo"].format(nombre=titulo))
                         notificador.cambio_marcha(titulo)
-                        overlay.cambio_marcha(titulo, color=color)
+                        overlay.cambio_marcha(titulo, color=color,
+                                              esquina=overlay.esquina_marcha)
                 else:
-                    # No es marcha -> ¿es el ON/OFF del interruptor de este modo?
-                    if modos.modo_actual is None:
-                        continue
-                    interruptores.procesar(modos.modo_actual, b)
+                    # No es marcha. ¿Boton de accion configurable?
+                    if botones.es_boton_accion(b):
+                        botones.ejecutar(b, modalidades.actual)
+                    # ¿Interruptor ON/OFF del modo actual? (0/1)
+                    if modos.modo_actual is not None:
+                        interruptores.procesar(modos.modo_actual, b)
             marchas_prev = pulsados
 
             # --- 2. EMBRAGUE como AND ---
