@@ -50,6 +50,7 @@ PANEL_2   = "#1d2028"
 TXT       = "#e8eaed"
 TXT_DIM   = "#8b909c"
 PLACE     = "#2a2e38"
+ACCENT    = "#4ade80"
 
 
 # Glifo (emoji) por atajo, para que cada uno tenga su icono propio y no herede
@@ -91,9 +92,21 @@ class Pizarra(ctk.CTk):
         self._fantasma = None     # etiqueta flotante durante el arrastre
         self._ver_todas = False   # modo "ver todas" desactivado por defecto
         self._modo_config = "apps"  # que modalidad estoy configurando
+        self._preset_config = self.cfg.get("botones_cara", {}).get(
+            "preset_por_defecto", "3")  # que preset estoy editando
 
         self._construir()
         self._cargar_apps()
+
+    # ---------- Acceso al preset en edicion ----------
+    def _marchas_preset(self):
+        """Dict de las 6 marchas del preset+modalidad que estoy editando."""
+        pr = self.cfg["modalidades"][self._modo_config].get("presets", {})
+        return pr.get(self._preset_config, {}).get("marchas", {})
+
+    def _preset_actual_info(self):
+        pr = self.cfg["modalidades"][self._modo_config].get("presets", {})
+        return pr.get(self._preset_config, {})
 
     # ---------- Historial ----------
     def _historial(self):
@@ -137,6 +150,28 @@ class Pizarra(ctk.CTk):
             font=("Segoe UI", 13, "bold"))
         self.sel_modo.set("Apps")
         self.sel_modo.pack(side="right", pady=(4, 0))
+
+        # Selector de PRESET (los 4 botones de cara ✕ □ ○ △)
+        presets_row = ctk.CTkFrame(cont, fg_color=BG)
+        presets_row.pack(fill="x", pady=(0, 10))
+        ctk.CTkLabel(presets_row, text="Preset:", font=("Segoe UI", 13),
+                     text_color=TXT_DIM).pack(side="left", padx=(2, 8))
+        self._btn_presets = {}
+        for bid in ["0", "1", "2", "3"]:
+            info = self._preset_info_de(bid)
+            b = ctk.CTkButton(
+                presets_row, width=90, height=34, corner_radius=10,
+                text=f"{info.get('simbolo','?')} {info.get('nombre','')}",
+                font=("Segoe UI", 13, "bold"),
+                fg_color=PANEL_2, hover_color=PLACE, text_color=TXT,
+                command=lambda x=bid: self._cambiar_preset_config(x))
+            b.pack(side="left", padx=3)
+            self._btn_presets[bid] = b
+        # boton para renombrar el preset actual
+        ctk.CTkButton(presets_row, text="✎ Renombrar", width=110, height=34,
+                      corner_radius=10, fg_color=PANEL, hover_color=PLACE,
+                      text_color=TXT_DIM, font=("Segoe UI", 12),
+                      command=self._renombrar_preset).pack(side="left", padx=(10, 0))
 
         cuerpo = ctk.CTkFrame(cont, fg_color=BG)
         cuerpo.pack(fill="both", expand=True)
@@ -254,8 +289,54 @@ class Pizarra(ctk.CTk):
                 placeholder_text="🔍  Escribe el nombre de tu app...")
             self._render_lista([])
         self._render_historial()
+        self._refrescar_botones_preset()
         for m in range(1, 7):
             self._refrescar_hueco(m)
+
+    def _preset_info_de(self, bid):
+        pr = self.cfg["modalidades"][self._modo_config].get("presets", {})
+        return pr.get(bid, {})
+
+    def _cambiar_preset_config(self, bid):
+        self._preset_config = bid
+        self._refrescar_botones_preset()
+        for m in range(1, 7):
+            self._refrescar_hueco(m)
+
+    def _refrescar_botones_preset(self):
+        """Actualiza los textos de los 4 botones de preset y resalta el activo."""
+        for bid, btn in self._btn_presets.items():
+            info = self._preset_info_de(bid)
+            btn.configure(text=f"{info.get('simbolo','?')} {info.get('nombre','')}")
+            if bid == self._preset_config:
+                btn.configure(fg_color=ACCENT, text_color="#0e0f13")
+            else:
+                btn.configure(fg_color=PANEL_2, text_color=TXT)
+
+    def _renombrar_preset(self):
+        dlg = ctk.CTkToplevel(self)
+        dlg.title("Renombrar preset")
+        dlg.geometry("340x160")
+        dlg.configure(fg_color=PANEL)
+        dlg.transient(self)
+        dlg.grab_set()
+        info = self._preset_actual_info()
+        ctk.CTkLabel(dlg, text=f"Nuevo nombre para {info.get('simbolo','')}",
+                     font=("Segoe UI", 14, "bold"), text_color=TXT).pack(pady=(18, 10))
+        e = ctk.CTkEntry(dlg, height=36)
+        e.insert(0, info.get("nombre", ""))
+        e.pack(fill="x", padx=20)
+
+        def ok():
+            nuevo = e.get().strip()
+            if nuevo:
+                self.cfg["modalidades"][self._modo_config]["presets"][
+                    self._preset_config]["nombre"] = nuevo
+                guardar(self.cfg)
+                self._refrescar_botones_preset()
+            dlg.destroy()
+        ctk.CTkButton(dlg, text="Guardar", height=38, command=ok).pack(
+            fill="x", padx=20, pady=(14, 0))
 
     def _catalogo_atajos_lista(self):
         cat = self.cfg.get("catalogo_atajos", {})
@@ -391,13 +472,11 @@ class Pizarra(ctk.CTk):
                 return modo
         return None
 
-    # ---------- Asignar / vaciar / guardar ----------
+    # ---------- Asignar / vaciar / guardar (sobre el PRESET en edicion) ----------
     def _asignar(self, modo, app):
+        marchas = self._marchas_preset()
         if self._modo_config == "atajos" or app.get("tipo") == "atajo":
-            # Guarda la clave del atajo en la modalidad atajos
-            mapa = self.cfg.setdefault("modalidades", {}).setdefault(
-                "atajos", {}).setdefault("atajos_marcha", {})
-            mapa[str(modo)] = app["destino"]  # destino = clave del catalogo
+            marchas[str(modo)] = app["destino"]  # clave del catalogo
             guardar(self.cfg)
             self._refrescar_hueco(modo)
             return
@@ -406,34 +485,28 @@ class Pizarra(ctk.CTk):
             "tipo": app.get("tipo", "app"),
             "destino": app["destino"],
         }
-        self.cfg.setdefault("programas", {})[str(modo)] = entrada
+        marchas[str(modo)] = entrada
         self._add_historial(entrada)
         guardar(self.cfg)
         self._refrescar_hueco(modo)
         self._render_historial()
 
     def _vaciar(self, modo):
+        marchas = self._marchas_preset()
         if self._modo_config == "atajos":
-            mapa = self.cfg.get("modalidades", {}).get("atajos", {}).get(
-                "atajos_marcha", {})
-            if str(modo) in mapa:
-                mapa[str(modo)] = ""
-                guardar(self.cfg)
+            marchas[str(modo)] = ""
         else:
-            progs = self.cfg.setdefault("programas", {})
-            if str(modo) in progs:
-                progs[str(modo)]["destino"] = ""
-                guardar(self.cfg)
+            marchas[str(modo)] = {"nombre": "", "tipo": "app", "destino": ""}
+        guardar(self.cfg)
         self._refrescar_hueco(modo)
 
     def _refrescar_hueco(self, modo):
         h = self.huecos[modo]
+        marchas = self._marchas_preset()
         if self._modo_config == "atajos":
-            mapa = self.cfg.get("modalidades", {}).get("atajos", {}).get(
-                "atajos_marcha", {})
-            clave = mapa.get(str(modo), "")
+            clave = marchas.get(str(modo), "")
             cat = self.cfg.get("catalogo_atajos", {}).get(clave, {})
-            # image="" limpia de verdad cualquier icono de app heredado
+            # image="" limpia de verdad cualquier icono de app heredado (fix Cap.9)
             h["icono"].configure(image="", text=glifo_de_atajo(clave) if clave else "")
             if clave and cat:
                 h["texto"].configure(
@@ -443,7 +516,7 @@ class Pizarra(ctk.CTk):
                 h["texto"].configure(text="vacio  ·  arrastra un atajo aqui",
                                      text_color=TXT_DIM)
             return
-        prog = self.cfg.get("programas", {}).get(str(modo), {})
+        prog = marchas.get(str(modo), {}) or {}
         destino = prog.get("destino", "")
         nombre = prog.get("nombre", "")
         if destino:
@@ -486,7 +559,7 @@ class Pizarra(ctk.CTk):
                 "nombre": n.get().strip() or f"Modo {modo}",
                 "tipo": "url", "destino": url,
             }
-            self.cfg.setdefault("programas", {})[str(modo)] = entrada
+            self._marchas_preset()[str(modo)] = entrada
             self._add_historial(entrada)
             guardar(self.cfg)
             self._refrescar_hueco(modo)

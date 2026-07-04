@@ -24,13 +24,11 @@ import time
 from core.wheel import G29
 from core.modes import GestorModos
 from core.actions import Acciones
-from core.switches import Interruptores
 from core.notify import Notificador
 from core.overlay import Overlay
 from core.launcher import Launcher
 from core.modalities import GestorModalidades
 from core.shortcuts import Atajos
-from core.buttons import Botones
 
 
 RUTA_CONFIG = os.path.join(os.path.dirname(__file__), "config", "settings.json")
@@ -53,14 +51,14 @@ def main():
     wheel = G29(cfg)
     modos = GestorModos(cfg)
     acciones = Acciones(cfg, log)
-    interruptores = Interruptores(cfg, log)
     notificador = Notificador(cfg, log)
     overlay = Overlay(cfg, log)
     launcher = Launcher(cfg, log)
     modalidades = GestorModalidades(cfg, log)
     atajos = Atajos(cfg, log)
-    botones = Botones(cfg, log, launcher, atajos)
     gesto_activo = cfg.get("gesto_lanzar", {}).get("activo", True)
+
+    botones_cara_ids = set(cfg.get("botones_cara", {}).get("ids", {}).keys())
 
     levas_cfg = cfg.get("levas", {})
     leva_sig = levas_cfg.get("siguiente", 4)
@@ -121,12 +119,14 @@ def main():
                         overlay.cambio_marcha(titulo, color=color,
                                               esquina=overlay.esquina_marcha)
                 else:
-                    # No es marcha. ¿Boton de accion configurable?
-                    if botones.es_boton_accion(b):
-                        botones.ejecutar(b, modalidades.actual)
-                    # ¿Interruptor ON/OFF del modo actual? (0/1)
-                    if modos.modo_actual is not None:
-                        interruptores.procesar(modos.modo_actual, b)
+                    # No es marcha ni leva. ¿Es un BOTON DE CARA (preset)?
+                    if str(b) in botones_cara_ids:
+                        info_preset = modalidades.cambiar_preset(b)
+                        if info_preset is not None:
+                            etiqueta = modalidades.etiqueta_preset(b)
+                            log(f">> PRESET: {etiqueta}")
+                            overlay.cambio_marcha(etiqueta,
+                                                  esquina=overlay.esquina_modalidad)
             marchas_prev = pulsados
 
             # --- 2. EMBRAGUE como AND ---
@@ -155,15 +155,21 @@ def main():
             )
             if disparar_ahora and not lanzar_prev:
                 modal = modalidades.actual
+                marchas = modalidades.marchas_preset_activo()
+                asignacion = marchas.get(str(modos.modo_actual))
                 if modal == "atajos":
-                    mapa = modalidades.config_de("atajos").get("atajos_marcha", {})
-                    clave = mapa.get(str(modos.modo_actual), "")
+                    clave = asignacion or ""
                     if clave:
                         atajos.ejecutar(clave)
                     else:
-                        log("(esta marcha no tiene atajo asignado)")
+                        log("(esta marcha no tiene atajo asignado en este preset)")
                 else:
-                    launcher.lanzar(modos.modo_actual)
+                    prog = asignacion or {}
+                    destino = (prog.get("destino") or "").strip() if isinstance(prog, dict) else ""
+                    if destino:
+                        launcher.abrir_destino(destino)
+                    else:
+                        log("(esta marcha no tiene app asignada en este preset)")
             lanzar_prev = disparar_ahora
 
             # --- Dormir hasta el siguiente frame (bajo consumo de CPU) ---

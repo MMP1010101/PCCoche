@@ -18,6 +18,11 @@ FIXES DE CÓDIGO (importantes, no revertir):
    pizarra. DEBE ser su propio método `def _cargar_apps(self):` justo después de
    _buscar_atajos, y llamarse desde __init__. NO lo vuelvas a meter dentro de otra función.
 
+ESTRUCTURA ACTUAL (desde Cap.10): las asignaciones de marchas viven en
+modalidades.<mod>.presets.{0-3}.marchas.{1-6}. Ya NO existe la sección "programas" ni
+"interruptores". Los botones de cara (botones_cara.ids ✕=0 □=1 ○=2 △=3) cambian el preset
+activo. Preset por defecto = "3" (△ Normal). NO vuelvas a crear "programas" suelto.
+
 CONFIG (settings.json) añadida/ajustada a mano:
 3. g29.ejes: acelerador 1, freno 2, embrague 3 (4 ejes; el volante es eje 0 sin usar).
 4. filtro_apps.excluir: añadidos "configurar", "control panel", "panel de control".

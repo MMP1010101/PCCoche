@@ -79,39 +79,6 @@
     "fade": true,
     "color_texto": "#ffffff"
   },
-  "programas": {
-    "_comentario": "Que abre cada marcha. tipo 'url' -> abre en el navegador. tipo 'app' -> ejecuta ruta/comando. Rellena 'destino' con la URL o la ruta exacta del .exe. Ejemplos de ruta app: VSCode 'C:/Users/TU/AppData/Local/Programs/Microsoft VS Code/Code.exe'; CapCut suele estar en 'C:/Users/TU/AppData/Local/CapCut/...'. Si dejas destino vacio, avisa y no abre.",
-    "1": {
-      "nombre": "chatGPT",
-      "tipo": "url",
-      "destino": "https://chatgpt.com/es-ES/"
-    },
-    "2": {
-      "nombre": "Visual Studio Code",
-      "tipo": "app",
-      "destino": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
-    },
-    "3": {
-      "nombre": "CapCut",
-      "tipo": "app",
-      "destino": "C:\\Users\\manci\\AppData\\Local\\CapCut\\Apps\\CapCut.exe"
-    },
-    "4": {
-      "nombre": "github",
-      "tipo": "url",
-      "destino": ""
-    },
-    "5": {
-      "nombre": "Kling",
-      "tipo": "url",
-      "destino": ""
-    },
-    "6": {
-      "nombre": "Command Prompt",
-      "tipo": "app",
-      "destino": ""
-    }
-  },
   "levas": {
     "_comentario": "Levas del volante (paddles) para cambiar de MODALIDAD (ciclico). VERIFICAR numeros con tests/test.py; ajustar si tu G29 da otros.",
     "siguiente": 4,
@@ -125,18 +92,206 @@
     ],
     "apps": {
       "nombre": "APPS",
-      "_comentario": "Las 6 marchas abren los programas de la seccion 'programas'."
+      "_comentario": "Las 6 marchas abren los programas de la seccion 'programas'.",
+      "presets": {
+        "0": {
+          "simbolo": "✕",
+          "nombre": "Preset X",
+          "marchas": {
+            "1": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "2": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "3": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "4": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "5": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "6": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            }
+          }
+        },
+        "1": {
+          "simbolo": "□",
+          "nombre": "Preset □",
+          "marchas": {
+            "1": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "2": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "3": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "4": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "5": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "6": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            }
+          }
+        },
+        "2": {
+          "simbolo": "○",
+          "nombre": "Preset ○",
+          "marchas": {
+            "1": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "2": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "3": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "4": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "5": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            },
+            "6": {
+              "nombre": "",
+              "tipo": "app",
+              "destino": ""
+            }
+          }
+        },
+        "3": {
+          "simbolo": "△",
+          "nombre": "Normal",
+          "marchas": {
+            "1": {
+              "nombre": "chatGPT",
+              "tipo": "url",
+              "destino": "https://chatgpt.com/es-ES/"
+            },
+            "2": {
+              "nombre": "Visual Studio Code",
+              "tipo": "app",
+              "destino": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+            },
+            "3": {
+              "nombre": "CapCut",
+              "tipo": "app",
+              "destino": "C:\\Users\\manci\\AppData\\Local\\CapCut\\Apps\\CapCut.exe"
+            },
+            "4": {
+              "nombre": "github",
+              "tipo": "url",
+              "destino": ""
+            },
+            "5": {
+              "nombre": "Kling",
+              "tipo": "url",
+              "destino": ""
+            },
+            "6": {
+              "nombre": "Command Prompt",
+              "tipo": "app",
+              "destino": ""
+            }
+          }
+        }
+      }
     },
     "atajos": {
       "nombre": "ATAJOS",
       "_comentario": "Las 6 marchas ejecutan atajos de teclado (asignados en 'atajos_marcha').",
-      "atajos_marcha": {
-        "1": "captura",
-        "2": "cambiar_ventana",
-        "3": "mover_pantalla",
-        "4": "",
-        "5": "dividir_pantalla",
-        "6": ""
+      "presets": {
+        "0": {
+          "simbolo": "✕",
+          "nombre": "Preset X",
+          "marchas": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "6": ""
+          }
+        },
+        "1": {
+          "simbolo": "□",
+          "nombre": "Preset □",
+          "marchas": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "6": ""
+          }
+        },
+        "2": {
+          "simbolo": "○",
+          "nombre": "Preset ○",
+          "marchas": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "6": ""
+          }
+        },
+        "3": {
+          "simbolo": "△",
+          "nombre": "Normal",
+          "marchas": {
+            "1": "captura",
+            "2": "cambiar_ventana",
+            "3": "mover_pantalla",
+            "4": "",
+            "5": "dividir_pantalla",
+            "6": ""
+          }
+        }
       }
     }
   },
@@ -209,53 +364,6 @@
     "dividir_pantalla": {
       "nombre": "Dividir pantalla",
       "teclas": "win+left"
-    }
-  },
-  "botones": {
-    "_comentario": "4 botones configurables, con accion DISTINTA por modalidad. 'ids' = numeros del G29 (VERIFICAR con tests/test.py; 0,1 los usa el interruptor Modo1, 2,3 estaban libres). Cada accion: {tipo: 'app'|'atajo'|'nada', valor: ruta-o-clave}. Amplia con mas tipos en el futuro.",
-    "ids": [
-      2,
-      3,
-      6,
-      7
-    ],
-    "acciones": {
-      "apps": {
-        "2": {
-          "tipo": "nada",
-          "valor": ""
-        },
-        "3": {
-          "tipo": "nada",
-          "valor": ""
-        },
-        "6": {
-          "tipo": "nada",
-          "valor": ""
-        },
-        "7": {
-          "tipo": "nada",
-          "valor": ""
-        }
-      },
-      "atajos": {
-        "2": {
-          "tipo": "atajo",
-          "valor": "copiar"
-        },
-        "3": {
-          "tipo": "atajo",
-          "valor": "pegar"
-        },
-        "6": {
-          "tipo": "nada",
-          "valor": ""
-        },
-        "7": {
-          "tipo": "nada",
-          "valor": ""
-        }
-      }
     }
   },
   "gesto_lanzar": {
@@ -357,14 +465,6 @@
       "file explorer"
     ]
   },
-  "interruptores": {
-    "_comentario": "Combo por marcha: dentro de un modo, un boton ENCIENDE y otro APAGA. La clave es el numero de modo. Amplia aqui para mas modos.",
-    "1": {
-      "nombre": "Interruptor de prueba",
-      "boton_on": 0,
-      "boton_off": 1
-    }
-  },
   "mensajes": {
     "arranque": "WHEEL DECK online. Mete una marcha, Emperador.",
     "cambio_modo": "Cambiando a {nombre}...",
@@ -381,5 +481,15 @@
     "sin_marcha_lanzar": "(mete una marcha antes de lanzar)",
     "fallo_abrir": ">> No pude abrir {nombre}: {error}",
     "salida": "Nos vemos, Emperador. Marcha atras metida. 🏁"
+  },
+  "botones_cara": {
+    "_comentario": "Botones de cara del volante = cambiar de PRESET (nivel 2). VERIFICAR ids con tests/test.py. simbolo solo visual.",
+    "ids": {
+      "0": "✕",
+      "1": "□",
+      "2": "○",
+      "3": "△"
+    },
+    "preset_por_defecto": "3"
   }
 }

@@ -5,6 +5,17 @@ description: Modo Entrevistador para el proyecto Wheel Deck (launcher Python + L
 
 # Wheel Deck — Modo Entrevistador
 
+## Modelos de Claude (recomendar por estos nombres exactos al cerrar cada capítulo)
+
+Opciones que tiene Markitos en su chat de Claude, y cuándo recomendar cada una:
+- **Sonnet 5** → cambios chicos/mecánicos (añadir un atajo, textos, config simple).
+- **Opus 4.8 normal** → bugs claros y cambios medianos no visuales.
+- **Opus 4.8 alto** → capítulos con varias piezas o lógica a encajar (ej. 8b, 9).
+- **Opus 4.8 alto + razonamiento** → cosas delicadas / evitar regresiones (refactors,
+  tocar runtime; ej. el bug reincidente de `_cargar_apps`).
+- **Opus 4.8 extra** → lo gordo y visual que quiere bordar a la primera (ej. pizarra 7b).
+- **Fable** → redacción/textos, NO para el código del proyecto.
+
 ## Quién es el usuario
 
 Markitos / Emperador (PixelWorks). Está construyendo Wheel Deck: un launcher en Python
@@ -105,9 +116,17 @@ Capítulos ya hechos y probados (ver `prompts/`):
   conseguir/instalar la API key (él lo mencionó como "de Instagram guardados" pero era
   solo un recordatorio de dónde sacar la API, NO una función de Instagram).
 
+- **Cap.10 ✅ HECHO: PRESETS por botón de cara (sistema de 2 niveles).** Los 4 botones de
+  cara (`botones_cara.ids`: ✕=0 □=1 ○=2 △=3) cambian el PRESET activo dentro de cada
+  modalidad. Estructura: `modalidades.<mod>.presets.{0-3}.marchas.{1-6}`. Nivel 1 =
+  modalidad (levas), Nivel 2 = preset (botones cara), marchas = 6 huecos del preset.
+  Presets con nombres LIBRES (renombrables en la pizarra). Preset por defecto = 3 (△
+  Normal). Migró las asignaciones antiguas (`programas`/`atajos_marcha`) al preset △ sin
+  perder nada; quitó el interruptor viejo y el `core/buttons.py` ahora gestiona presets.
+  Esta vez Claude SÍ respetó los fixes (trabajó sobre el zip completo del proyecto).
+  Pendiente que Markitos verifique con test.py los botones de cara y lo pruebe.
+
 - **Pendiente (más adelante):**
-  - Cada uno de los 4 botones libres con su CONFIGURACIÓN PERSONAL, distinta por
-    modalidad (Markitos dijo que hay más ideas, de momento solo esto).
   - Modalidad "Modelos de Claude" y otras filosofías nuevas.
   - Abrir el configurador con un botón del G29 (pausar runtime, soltar el volante, mismo
     botón guarda y cierra).
